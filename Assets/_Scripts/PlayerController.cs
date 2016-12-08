@@ -54,5 +54,15 @@ public class PlayerController : MonoBehaviour {
             else
                 l.gameObject.SetActive(true);
         }
+        AudioSource source = firePS.GetComponent<AudioSource>();
+        if(source)
+        {
+            if (!fireEnabled)
+            {
+                source.Stop();
+            }
+            else
+                source.Play();
+        }
     }
 }
