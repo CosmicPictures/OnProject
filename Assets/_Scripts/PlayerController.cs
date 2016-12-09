@@ -1,21 +1,40 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
     public GameObject firePS;
+    public MovieTexture movie;
+    public Renderer TVScreen;
     public bool fireEnabled = true;
+    public bool movieEnabled = true;
 
 	// Use this for initialization
 	void Start () {
 
         toggleFire();
+        toggleTV();
         
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    private void toggleTV()
+    {
+        if(!movieEnabled)
+        {
+            movie = (MovieTexture)TVScreen.material.mainTexture;
+            movie.Pause();
+        }
+        else
+        {
+            movie = (MovieTexture)TVScreen.material.mainTexture;
+            movie.Play();
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
         if(Input.GetKeyDown(KeyCode.Escape))
         {

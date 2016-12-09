@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - bullet
+  - dontmove
+  - listlast
+  - wall
+  - floor
+  - Fire
   layers:
   - Default
   - TransparentFX
@@ -19,9 +25,9 @@ TagManager:
   - MazeTurretBullet
   - Bg
   - FPSWeapon
-  - 
-  - 
-  - 
+  - Player
+  - TeleportPoints
+  - FireLayer
   - 
   - 
   - 
