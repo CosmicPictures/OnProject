@@ -61,7 +61,7 @@ Material:
       second: {r: 0, g: 0, b: 0, a: 0}
     - first:
         name: _ReflectColor
-      second: {r: 0.425784, g: 0.6537873, b: 0.678, a: 1}
+      second: {r: 0.09966601, g: 0.678, b: 0.64677, a: 1}
     - first:
         name: _SpecColor
       second: {r: 0, g: 0, b: 0, a: 0}
