@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 internal static class OVRPlugin
 {
-	public static readonly System.Version wrapperVersion = OVRP_1_9_0.version;
+	public static readonly System.Version wrapperVersion = OVRP_1_10_0.version;
 
 	private static System.Version _version;
 	public static System.Version version
@@ -46,19 +46,19 @@ internal static class OVRPlugin
 					}
 					else
 					{
-						_version = new System.Version(0, 0, 0);
+						_version = _versionZero;
 					}
 				}
 				catch
 				{
-					_version = new System.Version(0, 0, 0);
+					_version = _versionZero;
 				}
 
 				// Unity 5.1.1f3-p3 have OVRPlugin version "0.5.0", which isn't accurate.
 				if (_version == OVRP_0_5_0.version)
 					_version = OVRP_0_1_0.version;
 
-				if (_version < OVRP_1_3_0.version)
+				if (_version > _versionZero && _version < OVRP_1_3_0.version)
 					throw new PlatformNotSupportedException("Oculus Utilities version " + wrapperVersion + " is too new for OVRPlugin version " + _version.ToString () + ". Update to the latest version of Unity.");
 			}
 
@@ -79,7 +79,7 @@ internal static class OVRPlugin
 					if (version >= OVRP_1_1_0.version)
 						sdkVersion = OVRP_1_1_0.ovrp_GetNativeSDKVersion();
 					else
-						sdkVersion = "0.0.0";
+						sdkVersion = _versionZero.ToString();
                                     
 					if (sdkVersion != null)
 					{
@@ -89,12 +89,12 @@ internal static class OVRPlugin
 					}
 					else
 					{
-						_nativeSDKVersion = new System.Version(0, 0, 0);
+						_nativeSDKVersion = _versionZero;
 					}
 				}
 				catch
 				{
-					_nativeSDKVersion = new System.Version(0, 0, 0);
+					_nativeSDKVersion = _versionZero;
 				}
 			}
 
@@ -137,6 +137,8 @@ internal static class OVRPlugin
 		None   = -1,
 		Zero   = 0,
 		One    = 1,
+		Two    = 2,
+		Three  = 3,
 		Count,
 	}
 
@@ -671,6 +673,10 @@ internal static class OVRPlugin
 				if (version >= OVRP_1_7_0.version)
 					flags |= (uint)(shape) << OverlayShapeFlagShift;
 				else
+#else
+				if (shape == OverlayShape.Cubemap && version >= OVRP_1_10_0.version)
+					flags |= (uint)(shape) << OverlayShapeFlagShift;
+				else
 #endif
 					return false;
 			}
@@ -1008,6 +1014,7 @@ internal static class OVRPlugin
 	}
 
 	private const string pluginName = "OVRPlugin";
+	private static Version _versionZero = new System.Version(0, 0, 0);
 
 	private static class OVRP_0_1_0
 	{
@@ -1359,5 +1366,10 @@ internal static class OVRPlugin
 
 		[DllImport(pluginName, CallingConvention = CallingConvention.Cdecl)]
 		public static extern Bool ovrp_ResetAppPerfStats();
+	}
+
+	private static class OVRP_1_10_0
+	{
+		public static readonly System.Version version = new System.Version(1, 10, 0);
 	}
 }

@@ -20,10 +20,10 @@ limitations under the License.
 ************************************************************************************/
 
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UnitySampleAssets.Utility
 {
-    [RequireComponent(typeof (GUIText))]
     public class FPSCounter : MonoBehaviour
     {
         private float fpsMeasurePeriod = 0.5f;
@@ -31,6 +31,8 @@ namespace UnitySampleAssets.Utility
         private float fpsNextPeriod = 0;
         private int currentFps;
         private string display = "{0} FPS";
+        public Text canvasText;
+        
 
         private void Start()
         {
@@ -46,7 +48,8 @@ namespace UnitySampleAssets.Utility
                 currentFps = (int) (fpsAccumulator/fpsMeasurePeriod);
                 fpsAccumulator = 0;
                 fpsNextPeriod += fpsMeasurePeriod;
-                GetComponent<GUIText>().text = string.Format(display, currentFps);
+                //GetComponent<GUIText>().text = string.Format(display, currentFps);
+                canvasText.text = string.Format(display, currentFps);
             }
         }
     }

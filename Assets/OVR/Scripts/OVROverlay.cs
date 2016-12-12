@@ -168,7 +168,7 @@ public class OVROverlay : MonoBehaviour
 			return;
 
 #if !UNITY_ANDROID || UNITY_EDITOR
-		if (currentOverlayShape == OverlayShape.Cubemap || currentOverlayShape == OverlayShape.Cylinder)
+		if (currentOverlayShape == OverlayShape.Cylinder)
 		{
 			Debug.LogWarning("Overlay shape " + currentOverlayShape + " is not supported on current platform");
 		}
@@ -208,6 +208,13 @@ public class OVROverlay : MonoBehaviour
 		Vector3 scale = transform.lossyScale;
 		for (int i = 0; i < 3; ++i)
 			scale[i] /= Camera.current.transform.lossyScale[i];
+
+#if !UNITY_ANDROID
+		if (currentOverlayShape == OverlayShape.Cubemap)
+		{
+			pose.position = Camera.current.transform.position;
+		}
+#endif
 
 		// Cylinder overlay sanity checking
 		if (currentOverlayShape == OverlayShape.Cylinder)
