@@ -78,8 +78,11 @@ public class OVRInspectorLoader : MonoBehaviour
     IEnumerator DelayedMenuSummon()
     {
         yield return new WaitForSeconds(summonMenuDelay);
+        //Hide menu on start for now
+        /*
         OVRInspector.instance.Show();
         // Now we don't need this anymore, disable it to reduce the draw call overhead
         gameObject.SetActive(false);
+        */
     }
 }

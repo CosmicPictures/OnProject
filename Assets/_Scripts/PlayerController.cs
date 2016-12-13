@@ -8,9 +8,17 @@ public class PlayerController : MonoBehaviour {
 
     public GameObject firePS;
     public MovieTexture movie;
+    private AudioClip movieAudio;
+    public AudioSource movieAudioSource;
+    public AudioSource[] speakers;
+    public AudioClip[] speakerClips;
+    public AudioClip[] currentClips;
     public RawImage TVScreen;
     public RawImage WebcamScreen;
+    public RawImage securityScreen;
     private WebCamTexture webcamTex;
+    private WebCamTexture securityTex;
+    private int speakerClipIndex = 0;
     public bool fireEnabled = true;
     public bool movieEnabled = true;
     public bool webcamEnabled = false;
@@ -20,12 +28,22 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 
         Application.targetFrameRate = targetFPS;
-        QualitySettings.vSyncCount = 0;
+        //QualitySettings.vSyncCount = 0;
+        currentClips = new AudioClip[speakers.Length];
         movie.Stop();
-
+        movieAudioSource = TVScreen.GetComponent<AudioSource>();
+        movieAudio = movie.audioClip;
+        movieAudioSource.clip = movieAudio;
         webcamTex = new WebCamTexture();
         webcamTex.requestedWidth = (int)WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
         webcamTex.requestedHeight = (int)WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+
+        securityTex = webcamTex;
+        securityTex.requestedWidth = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
+        securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+        securityScreen.texture = securityTex;
+        securityTex.Play();
+
         toggleFire();
         toggleTV();
         toggleWebcam();
@@ -37,7 +55,11 @@ public class PlayerController : MonoBehaviour {
         if(!movieEnabled)
         {
             movie = (MovieTexture)TVScreen.texture;
-            movie.Pause();
+            movie.Stop();
+            movieAudioSource.Stop();
+            //movie.Pause();
+            //movieAudioSource.Pause();
+            
             TVScreen.gameObject.SetActive(false);
         }
         else
@@ -47,7 +69,10 @@ public class PlayerController : MonoBehaviour {
             movie = (MovieTexture)TVScreen.texture;
             TVScreen.gameObject.SetActive(true);
             if (!movie.isPlaying)
+            {
                 movie.Play();
+                movieAudioSource.Play();
+            }
         }
     }
     private void toggleWebcam()
@@ -56,12 +81,14 @@ public class PlayerController : MonoBehaviour {
         {
             WebcamScreen.gameObject.SetActive(false);
 
+
         }
         else
         {
 
             movieEnabled = false;
             toggleTV();
+
             WebcamScreen.texture = webcamTex;
             webcamTex.Play();
 
@@ -100,6 +127,10 @@ public class PlayerController : MonoBehaviour {
             webcamEnabled = !webcamEnabled;
             toggleWebcam();
         }
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            toggleSpeakerClips();
+        }
     }
 
     void toggleFire()
@@ -130,6 +161,34 @@ public class PlayerController : MonoBehaviour {
             }
             else
                 source.Play();
+        }
+    }
+
+    void toggleSpeakerClips()
+    {
+        speakerClipIndex++;
+
+        if (speakerClipIndex >= speakerClips.Length)
+            speakerClipIndex = 0;
+
+        if (speakerClips[speakerClipIndex])
+        {
+            for(int i = 0; i < currentClips.Length; i++)
+            {
+                speakers[i].Stop();
+                if(currentClips[i])
+                    Destroy(currentClips[i]);
+                currentClips[i] = Instantiate(speakerClips[speakerClipIndex]);
+                speakers[i].clip = currentClips[i];
+                speakers[i].Play();
+            }   
+        }
+        else
+        {
+            foreach(AudioSource source in speakers)
+            {
+                source.Stop();
+            }
         }
     }
 }

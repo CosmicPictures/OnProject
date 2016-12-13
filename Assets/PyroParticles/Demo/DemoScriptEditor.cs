@@ -1,10 +1,12 @@
 ﻿using System;
 
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
 
 namespace DigitalRuby.PyroParticles
 {
+
     [CustomEditor(typeof(DemoScript))]
     public class LightningBoltEditor : Editor
     {
@@ -46,5 +48,8 @@ namespace DigitalRuby.PyroParticles
 
             DrawDefaultInspector();
         }
+
+
     }
 }
+#endif
