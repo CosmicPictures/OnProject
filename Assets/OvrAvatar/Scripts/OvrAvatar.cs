@@ -52,6 +52,9 @@ public class OvrAvatar : MonoBehaviour {
     public bool ShowFirstPerson = true;
     public bool ShowThirdPerson;
     public ovrAvatarCapabilities Capabilities = ovrAvatarCapabilities.All;
+    public GameObject tablet;
+    public Vector3 tabletOffset;
+    public Quaternion tabletRotation;
     
     const float PacketDurationSeconds = 1 / 45.0f;
     OvrAvatarPacket currentPacket;
@@ -303,6 +306,17 @@ public class OvrAvatar : MonoBehaviour {
                 if (componentObject != null)
                 {
                     AddAvatarComponent(componentObject, component);
+
+                    if (ptr == CAPI.ovrAvatarPose_GetLeftHandComponent(sdkAvatar).renderComponent)
+                    {
+                        //Attach tablet
+                        GameObject tab = Instantiate(tablet);
+                        Transform temp = tablet.transform;
+                        tab.transform.position = componentObject.transform.position + tabletOffset;
+                        tab.transform.parent = componentObject.transform;
+                        tab.transform.localRotation = temp.rotation;
+                    }  
+
                     if (specificType != null)
                     {
                         IAvatarPart part = componentObject.GetComponent(specificType) as IAvatarPart;
