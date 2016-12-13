@@ -55,7 +55,9 @@ public class OvrAvatar : MonoBehaviour {
     public GameObject tablet;
     public Vector3 tabletOffset;
     public Quaternion tabletRotation;
-    
+    public bool addCollidersToLeftBones = false;
+    public bool addCollidersToRightBones = false;
+    public float boneColliderRadius = 0.01f;
     const float PacketDurationSeconds = 1 / 45.0f;
     OvrAvatarPacket currentPacket;
 
@@ -309,13 +311,17 @@ public class OvrAvatar : MonoBehaviour {
 
                     if (ptr == CAPI.ovrAvatarPose_GetLeftHandComponent(sdkAvatar).renderComponent)
                     {
+
                         //Attach tablet
-                        GameObject tab = Instantiate(tablet);
-                        Transform temp = tablet.transform;
-                        tab.transform.position = componentObject.transform.position + tabletOffset;
-                        tab.transform.parent = componentObject.transform;
-                        tab.transform.localRotation = temp.rotation;
-                    }  
+                        if (tablet)
+                        {
+                            GameObject tab = Instantiate(tablet);
+                            Transform temp = tablet.transform;
+                            tab.transform.position = componentObject.transform.position + tabletOffset;
+                            tab.transform.parent = componentObject.transform;
+                            tab.transform.localRotation = temp.rotation;
+                        }
+                    }
 
                     if (specificType != null)
                     {
@@ -329,6 +335,40 @@ public class OvrAvatar : MonoBehaviour {
             }
             UpdateAvatarComponent(component);
         }
+
+        
+        if (addCollidersToLeftBones && GameObject.Find("hands:b_l_hand"))
+        {
+            addCollidersToLeftBones = false;
+            Debug.Log(GameObject.Find("hands:b_l_hand"));
+
+            foreach (Transform t in GameObject.Find("hands:b_l_hand").GetComponentsInChildren<Transform>())
+            {
+                SphereCollider col = t.gameObject.AddComponent<SphereCollider>();
+                col.radius = boneColliderRadius;
+                col.isTrigger = true;
+                Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
+                rigid.isKinematic = true;
+            }
+
+        }
+        if (addCollidersToRightBones && GameObject.Find("hands:b_r_hand"))
+        {
+            addCollidersToRightBones = false;
+            Debug.Log(GameObject.Find("hands:b_r_hand"));
+
+            foreach (Transform t in GameObject.Find("hands:b_r_hand").GetComponentsInChildren<Transform>())
+            {
+                SphereCollider col = t.gameObject.AddComponent<SphereCollider>();
+                col.radius = boneColliderRadius;
+                col.isTrigger = true;
+                Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
+                rigid.isKinematic = true;
+            }
+
+        }
+
+
         HashSet<string> deletableNames = new HashSet<string>(trackedComponents.Keys);
         deletableNames.ExceptWith(componentsThisRun);
         //deletableNames contains the name of all components which are tracked and were
