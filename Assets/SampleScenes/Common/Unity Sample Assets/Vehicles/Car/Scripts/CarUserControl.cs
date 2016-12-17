@@ -20,7 +20,6 @@ limitations under the License.
 ************************************************************************************/
 
 using UnityEngine;
-using UnitySampleAssets.CrossPlatformInput;
 
 namespace UnitySampleAssets.Vehicles.Car
 {

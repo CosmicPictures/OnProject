@@ -1,55 +1,36 @@
-﻿/************************************************************************************
-
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
-
-Licensed under the Oculus VR Rift SDK License Version 3.2 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
-which is provided at the time of installation or download, or which
-otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-
-http://www.oculusvr.com/licenses/LICENSE-3.2
-
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-************************************************************************************/
-
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace UnitySampleAssets.Utility
+namespace UnityStandardAssets.Utility
 {
+    [RequireComponent(typeof (GUIText))]
     public class FPSCounter : MonoBehaviour
     {
-        private float fpsMeasurePeriod = 0.5f;
-        private int fpsAccumulator = 0;
-        private float fpsNextPeriod = 0;
-        private int currentFps;
-        private string display = "{0} FPS";
-        public Text canvasText;
-        
+        const float fpsMeasurePeriod = 0.5f;
+        private int m_FpsAccumulator = 0;
+        private float m_FpsNextPeriod = 0;
+        private int m_CurrentFps;
+        const string display = "{0} FPS";
+        private GUIText m_GuiText;
+
 
         private void Start()
         {
-            fpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
+            m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
+            m_GuiText = GetComponent<GUIText>();
         }
+
 
         private void Update()
         {
             // measure average frames per second
-            fpsAccumulator++;
-            if (Time.realtimeSinceStartup > fpsNextPeriod)
+            m_FpsAccumulator++;
+            if (Time.realtimeSinceStartup > m_FpsNextPeriod)
             {
-                currentFps = (int) (fpsAccumulator/fpsMeasurePeriod);
-                fpsAccumulator = 0;
-                fpsNextPeriod += fpsMeasurePeriod;
-                //GetComponent<GUIText>().text = string.Format(display, currentFps);
-                canvasText.text = string.Format(display, currentFps);
+                m_CurrentFps = (int) (m_FpsAccumulator/fpsMeasurePeriod);
+                m_FpsAccumulator = 0;
+                m_FpsNextPeriod += fpsMeasurePeriod;
+                m_GuiText.text = string.Format(display, m_CurrentFps);
             }
         }
     }

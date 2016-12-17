@@ -54,6 +54,7 @@ public class OvrAvatar : MonoBehaviour {
     public ovrAvatarCapabilities Capabilities = ovrAvatarCapabilities.All;
     public GameObject tablet;
     public Vector3 tabletOffset;
+    public GameObject tabletGUI;
     public Quaternion tabletRotation;
     public bool addCollidersToLeftBones = false;
     public bool addCollidersToRightBones = false;
@@ -320,6 +321,7 @@ public class OvrAvatar : MonoBehaviour {
                             tab.transform.position = componentObject.transform.position + tabletOffset;
                             tab.transform.parent = componentObject.transform;
                             tab.transform.localRotation = temp.rotation;
+
                         }
                     }
 
@@ -355,7 +357,7 @@ public class OvrAvatar : MonoBehaviour {
         if (addCollidersToRightBones && GameObject.Find("hands:b_r_hand"))
         {
             addCollidersToRightBones = false;
-            Debug.Log(GameObject.Find("hands:b_r_hand"));
+            //Debug.Log(GameObject.Find("hands:b_r_hand"));
 
             foreach (Transform t in GameObject.Find("hands:b_r_hand").GetComponentsInChildren<Transform>())
             {

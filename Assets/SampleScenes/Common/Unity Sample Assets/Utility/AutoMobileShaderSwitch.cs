@@ -1,37 +1,15 @@
-﻿/************************************************************************************
-
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
-
-Licensed under the Oculus VR Rift SDK License Version 3.2 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
-which is provided at the time of installation or download, or which
-otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-
-http://www.oculusvr.com/licenses/LICENSE-3.2
-
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-************************************************************************************/
-
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace UnitySampleAssets.Utility
+namespace UnityStandardAssets.Utility
 {
-
     public class AutoMobileShaderSwitch : MonoBehaviour
     {
-
-        [SerializeField] private ReplacementList replacements;
+        [SerializeField] private ReplacementList m_ReplacementList;
 
         // Use this for initialization
         private void OnEnable()
@@ -45,7 +23,7 @@ namespace UnitySampleAssets.Utility
 			int materialsReplaced = 0;
 			int materialInstancesReplaced = 0;
 
-			foreach(ReplacementDefinition replacementDef in replacements.items)
+			foreach(ReplacementDefinition replacementDef in m_ReplacementList.items)
 			{
 				foreach(var r in renderers)
 				{
@@ -87,31 +65,30 @@ namespace UnitySampleAssets.Utility
 #endif
         }
 
-        [System.Serializable]
+
+        [Serializable]
         public class ReplacementDefinition
         {
             public Shader original = null;
             public Shader replacement = null;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class ReplacementList
         {
             public ReplacementDefinition[] items = new ReplacementDefinition[0];
         }
-
     }
 }
 
-namespace UnitySampleAssets.Utility.Inspector
+namespace UnityStandardAssets.Utility.Inspector
 {
-
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof (AutoMobileShaderSwitch.ReplacementList))]
     public class ReplacementListDrawer : PropertyDrawer
     {
-        private float lineHeight = 18;
-        private float spacing = 4;
+        const float k_LineHeight = 18;
+        const float k_Spacing = 4;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -126,17 +103,15 @@ namespace UnitySampleAssets.Utility.Inspector
             EditorGUI.indentLevel = 0;
 
             var items = property.FindPropertyRelative("items");
-            string[] titles = new string[] {"Original", "Replacement", ""};
-            string[] props = new string[] {"original", "replacement", "-"};
-            float[] widths = new float[] {.45f, .45f, .1f};
-            float lineHeight = 18;
+            var titles = new string[] {"Original", "Replacement", ""};
+            var props = new string[] {"original", "replacement", "-"};
+            var widths = new float[] {.45f, .45f, .1f};
+            const float lineHeight = 18;
             bool changedLength = false;
             if (items.arraySize > 0)
             {
-
                 for (int i = -1; i < items.arraySize; ++i)
                 {
-
                     var item = items.GetArrayElementAtIndex(i);
 
                     float rowX = x;
@@ -167,33 +142,34 @@ namespace UnitySampleAssets.Utility.Inspector
                                             changedLength = true;
                                             break;
                                         case "v":
-                                            if (i > 0) items.MoveArrayElement(i, i + 1);
+                                            if (i > 0)
+                                            {
+                                                items.MoveArrayElement(i, i + 1);
+                                            }
                                             break;
                                         case "^":
-                                            if (i < items.arraySize - 1) items.MoveArrayElement(i, i - 1);
+                                            if (i < items.arraySize - 1)
+                                            {
+                                                items.MoveArrayElement(i, i - 1);
+                                            }
                                             break;
                                     }
-
                                 }
-
                             }
                             else
                             {
-
                                 SerializedProperty prop = item.FindPropertyRelative(props[n]);
                                 EditorGUI.PropertyField(rect, prop, GUIContent.none);
-
                             }
                         }
                     }
 
-                    y += lineHeight + spacing;
+                    y += lineHeight + k_Spacing;
                     if (changedLength)
                     {
                         break;
                     }
                 }
-
             }
 
             // add button
@@ -204,20 +180,20 @@ namespace UnitySampleAssets.Utility.Inspector
                 items.InsertArrayElementAtIndex(items.arraySize);
             }
 
-            y += lineHeight + spacing;
+            y += lineHeight + k_Spacing;
 
             // Set indent back to what it was
             EditorGUI.indentLevel = indent;
             EditorGUI.EndProperty();
         }
 
+
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SerializedProperty items = property.FindPropertyRelative("items");
-            float lineAndSpace = lineHeight + spacing;
+            float lineAndSpace = k_LineHeight + k_Spacing;
             return 40 + (items.arraySize*lineAndSpace) + lineAndSpace;
         }
-
     }
 #endif
 }

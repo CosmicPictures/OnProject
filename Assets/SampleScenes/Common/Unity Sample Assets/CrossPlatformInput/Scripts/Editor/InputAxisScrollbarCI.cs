@@ -24,14 +24,17 @@ using UnityEditor.UI;
 
 namespace UnitySampleAssets.CrossPlatformInput.Inspector
 {
-    [CustomEditor(typeof (InputAxisScrollbar))]
+    [CustomEditor(typeof (InputAxisScrollbarCI))]
     public class InputAxisScrollbarCI : ScrollbarEditor
     {
+        /*
         public override void OnInspectorGUI()
         {
-            InputAxisScrollbar awesomescrollbar = target as InputAxisScrollbar;
+            InputAxisScrollbarCI awesomescrollbar = target as InputAxisScrollbarCI;
+            awesomescrollbar.
             awesomescrollbar.axis = EditorGUILayout.TextField("Input Axis", awesomescrollbar.axis);
             base.OnInspectorGUI();
         }
+        */
     }
 }

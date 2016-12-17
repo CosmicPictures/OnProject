@@ -7,12 +7,15 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour {
 
     public GameObject firePS;
+    public GameObject roomba;
     public MovieTexture movie;
     private AudioClip movieAudio;
     public AudioSource movieAudioSource;
     public AudioSource[] speakers;
+    public AudioSource masterSpeaker;
+    public AudioSource[] slaveSpeakers;
     public AudioClip[] speakerClips;
-    public AudioClip[] currentClips;
+    public AudioClip[,] loadClips;
     public RawImage TVScreen;
     public RawImage WebcamScreen;
     public RawImage securityScreen;
@@ -22,14 +25,32 @@ public class PlayerController : MonoBehaviour {
     public bool fireEnabled = true;
     public bool movieEnabled = true;
     public bool webcamEnabled = false;
+    public bool roombaEnabled = false;
     public int targetFPS = 90;
+    public float buttonCooldown = 0.25f;
+    public bool canPressButton = true;
+    public float hapticPulseDuration = 0.2f;
+    private roomNavigation roombaScript;
 
 	// Use this for initialization
 	void Start () {
 
         Application.targetFrameRate = targetFPS;
+
+        roombaScript = roomba.GetComponent<roomNavigation>();
+
         //QualitySettings.vSyncCount = 0;
-        currentClips = new AudioClip[speakers.Length];
+        loadClips = new AudioClip[speakers.Length,speakerClips.Length];
+
+        for(int i = 0; i < speakers.Length; i++)
+        {
+            for(int j = 0; j < speakerClips.Length; j++)
+            {
+                if(speakerClips[j])
+                    loadClips[i, j] = Instantiate(speakerClips[j]);
+            }
+        }
+
         movie.Stop();
         movieAudioSource = TVScreen.GetComponent<AudioSource>();
         movieAudio = movie.audioClip;
@@ -42,17 +63,45 @@ public class PlayerController : MonoBehaviour {
         securityTex.requestedWidth = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
         securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
         securityScreen.texture = securityTex;
-        securityTex.Play();
 
+        try
+        {
+            securityTex.Play();
+        }
+        catch
+        {
+            Debug.Log("Failed to find webcam");
+        }
+            
+
+
+        fireEnabled = !fireEnabled;
         toggleFire();
+
+        movieEnabled = !movieEnabled;
         toggleTV();
+
+        webcamEnabled = !webcamEnabled;
         toggleWebcam();
-        
+
+        if(speakers[0])
+            masterSpeaker = speakers[0];
+
+        if(speakers.Length > 1)
+        {
+            slaveSpeakers = new AudioSource[speakers.Length - 1];
+            for(int i = 1; i < speakers.Length; i++)
+            {
+                slaveSpeakers[i - 1] = speakers[i];
+            }
+        }
+
 	}
 
-    private void toggleTV()
+    public void toggleTV()
     {
-        if(!movieEnabled)
+        movieEnabled = !movieEnabled;
+        if (!movieEnabled)
         {
             movie = (MovieTexture)TVScreen.texture;
             movie.Stop();
@@ -64,8 +113,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
-            webcamEnabled = false;
-            toggleWebcam();
+            disableWebcam();
             movie = (MovieTexture)TVScreen.texture;
             TVScreen.gameObject.SetActive(true);
             if (!movie.isPlaying)
@@ -75,8 +123,25 @@ public class PlayerController : MonoBehaviour {
             }
         }
     }
-    private void toggleWebcam()
+
+    public void disableWebcam()
     {
+        webcamEnabled = false;
+        WebcamScreen.gameObject.SetActive(false);
+    }
+    public void disableMovie()
+    {
+        movieEnabled = false;
+        movie = (MovieTexture)TVScreen.texture;
+        movie.Stop();
+        movieAudioSource.Stop();
+        TVScreen.gameObject.SetActive(false);
+
+    }
+
+    public void toggleWebcam()
+    {
+        webcamEnabled = !webcamEnabled;
         if (!webcamEnabled)
         {
             WebcamScreen.gameObject.SetActive(false);
@@ -85,9 +150,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
-
-            movieEnabled = false;
-            toggleTV();
+            disableMovie();
 
             WebcamScreen.texture = webcamTex;
             webcamTex.Play();
@@ -113,28 +176,60 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            fireEnabled = !fireEnabled;
+            
             toggleFire();
 
         }
         if(Input.GetKeyDown(KeyCode.T))
         {
-            movieEnabled = !movieEnabled;
+
             toggleTV();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            webcamEnabled = !webcamEnabled;
             toggleWebcam();
         }
         if(Input.GetKeyDown(KeyCode.M))
         {
             toggleSpeakerClips();
         }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            toggleRoomba();
+        }
+
+            //Sync speakers
+            if (masterSpeaker.isPlaying)
+        {
+            foreach(AudioSource slave in slaveSpeakers)
+            {
+                slave.timeSamples = masterSpeaker.timeSamples;
+            }
+        }
     }
 
-    void toggleFire()
+    public void toggleRoomba()
     {
+        roombaEnabled = !roombaEnabled;
+
+        if (!roombaEnabled)
+        {
+            roombaScript.agent.destination = roombaScript.initialPosition;
+            roombaScript.navigationEnabled = false;
+        }
+        else
+        {
+            roombaScript.agent.destination = roombaScript.GenerateRandomPoint(roombaScript.navigationMesh);
+            roombaScript.navigationEnabled = true;
+            if (!roombaScript.audio.isPlaying)
+                roombaScript.audio.Play();
+        }
+    }
+
+    public void toggleFire()
+    {
+        fireEnabled = !fireEnabled;
+
         foreach (ParticleSystem ps in firePS.GetComponentsInChildren<ParticleSystem>())
         {
             if (!fireEnabled)
@@ -164,7 +259,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    void toggleSpeakerClips()
+    public void toggleSpeakerClips()
     {
         speakerClipIndex++;
 
@@ -173,13 +268,10 @@ public class PlayerController : MonoBehaviour {
 
         if (speakerClips[speakerClipIndex])
         {
-            for(int i = 0; i < currentClips.Length; i++)
+            for(int i = 0; i < speakers.Length; i++)
             {
                 speakers[i].Stop();
-                if(currentClips[i])
-                    Destroy(currentClips[i]);
-                currentClips[i] = Instantiate(speakerClips[speakerClipIndex]);
-                speakers[i].clip = currentClips[i];
+                speakers[i].clip = loadClips[i, speakerClipIndex];
                 speakers[i].Play();
             }   
         }
@@ -190,5 +282,40 @@ public class PlayerController : MonoBehaviour {
                 source.Stop();
             }
         }
+    }
+
+    public IEnumerator disableInputForTime(float time)
+    {
+        TriggerHapticPulse(hapticPulseDuration, OVRInput.Controller.LTouch);
+        TriggerHapticPulse(hapticPulseDuration, OVRInput.Controller.RTouch);
+        canPressButton = false;
+        yield return new WaitForSeconds(time);
+        canPressButton = true;
+        yield return null;
+    }
+
+    public void TriggerHapticPulse(float duration = 0.1f, OVRInput.Controller controller = OVRInput.Controller.RTouch)
+    {
+        if (OVRInput.GetActiveController() == OVRInput.Controller.Touch)
+        {
+            StopCoroutine("DoHapticPulse");
+            StartCoroutine(DoHapticPulse(duration, controller));
+        }
+    }
+
+    private IEnumerator DoHapticPulse(float duration, OVRInput.Controller controller)
+    {
+        OVRInput.SetControllerVibration(0.2f, 0.2f, controller);    //Should we allow setting strength
+        float endTime = Time.time + (duration);
+        do
+        {
+            yield return null;
+        } while (Time.time < endTime);
+        OVRInput.SetControllerVibration(0, 0, controller);
+    }
+
+    private void OnApplicationQuit()
+    {
+        OVRInput.SetControllerVibration(0, 0);
     }
 }

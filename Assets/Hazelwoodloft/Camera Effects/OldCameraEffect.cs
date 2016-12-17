@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 
 [ExecuteInEditMode]
 [RequireComponent (typeof(Camera))]

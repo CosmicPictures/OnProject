@@ -1,37 +1,14 @@
-﻿/************************************************************************************
-
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
-
-Licensed under the Oculus VR Rift SDK License Version 3.2 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
-which is provided at the time of installation or download, or which
-otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-
-http://www.oculusvr.com/licenses/LICENSE-3.2
-
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-************************************************************************************/
-
-using UnityEngine;
+using System;
 using System.Collections;
-using UnityEngine.SceneManagement;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace UnitySampleAssets.Utility
+namespace UnityStandardAssets.Utility
 {
-
     public class TimedObjectActivator : MonoBehaviour
     {
-
         public enum Action
         {
             Activate,
@@ -42,9 +19,7 @@ namespace UnitySampleAssets.Utility
         }
 
 
-        public Entries entries = new Entries();
-
-        [System.Serializable]
+        [Serializable]
         public class Entry
         {
             public GameObject target;
@@ -52,13 +27,17 @@ namespace UnitySampleAssets.Utility
             public float delay;
         }
 
-        [System.Serializable]
+
+        [Serializable]
         public class Entries
         {
             public Entry[] entries;
         }
+        
+        
+        public Entries entries = new Entries();
 
-
+        
         private void Awake()
         {
             foreach (Entry entry in entries.entries)
@@ -82,11 +61,13 @@ namespace UnitySampleAssets.Utility
             }
         }
 
+
         private IEnumerator Activate(Entry entry)
         {
             yield return new WaitForSeconds(entry.delay);
             entry.target.SetActive(true);
         }
+
 
         private IEnumerator Deactivate(Entry entry)
         {
@@ -94,29 +75,28 @@ namespace UnitySampleAssets.Utility
             entry.target.SetActive(false);
         }
 
+
         private IEnumerator ReloadLevel(Entry entry)
         {
             yield return new WaitForSeconds(entry.delay);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
+            Application.LoadLevel(Application.loadedLevel);
         }
     }
 }
 
 
-namespace UnitySampleAssets.Utility.Inspector
+namespace UnityStandardAssets.Utility.Inspector
 {
-
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof (TimedObjectActivator.Entries))]
     public class EntriesDrawer : PropertyDrawer
     {
-        private float lineHeight = 18;
-        private float spacing = 4;
+        private const float k_LineHeight = 18;
+        private const float k_Spacing = 4;
+
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-
             EditorGUI.BeginProperty(position, label, property);
 
             float x = position.x;
@@ -141,23 +121,23 @@ namespace UnitySampleAssets.Utility.Inspector
 
                 for (int i = 0; i < entries.arraySize; ++i)
                 {
-                    y += lineHeight + spacing;
+                    y += k_LineHeight + k_Spacing;
 
                     var entry = entries.GetArrayElementAtIndex(i);
 
                     float rowX = x;
 
                     // Calculate rects
-                    Rect actionRect = new Rect(rowX, y, actionWidth, lineHeight);
+                    Rect actionRect = new Rect(rowX, y, actionWidth, k_LineHeight);
                     rowX += actionWidth;
 
-                    Rect targetRect = new Rect(rowX, y, targetWidth, lineHeight);
+                    Rect targetRect = new Rect(rowX, y, targetWidth, k_LineHeight);
                     rowX += targetWidth;
 
-                    Rect delayRect = new Rect(rowX, y, delayWidth, lineHeight);
+                    Rect delayRect = new Rect(rowX, y, delayWidth, k_LineHeight);
                     rowX += delayWidth;
 
-                    Rect buttonRect = new Rect(rowX, y, buttonWidth, lineHeight);
+                    Rect buttonRect = new Rect(rowX, y, buttonWidth, k_LineHeight);
                     rowX += buttonWidth;
 
                     // Draw fields - passs GUIContent.none to each so they are drawn without labels
@@ -182,18 +162,17 @@ namespace UnitySampleAssets.Utility.Inspector
                     }
                 }
             }
-
-
+            
             // add & sort buttons
-            y += lineHeight + spacing;
+            y += k_LineHeight + k_Spacing;
 
-            var addButtonRect = new Rect(position.x + position.width - 120, y, 60, lineHeight);
+            var addButtonRect = new Rect(position.x + position.width - 120, y, 60, k_LineHeight);
             if (GUI.Button(addButtonRect, "Add"))
             {
                 entries.InsertArrayElementAtIndex(entries.arraySize);
             }
 
-            var sortButtonRect = new Rect(position.x + position.width - 60, y, 60, lineHeight);
+            var sortButtonRect = new Rect(position.x + position.width - 60, y, 60, k_LineHeight);
             if (GUI.Button(sortButtonRect, "Sort"))
             {
                 bool changed = true;
@@ -216,7 +195,6 @@ namespace UnitySampleAssets.Utility.Inspector
             }
 
 
-
             // Set indent back to what it was
             EditorGUI.indentLevel = indent;
             //
@@ -225,13 +203,13 @@ namespace UnitySampleAssets.Utility.Inspector
             EditorGUI.EndProperty();
         }
 
+
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SerializedProperty entries = property.FindPropertyRelative("entries");
-            float lineAndSpace = lineHeight + spacing;
+            float lineAndSpace = k_LineHeight + k_Spacing;
             return 40 + (entries.arraySize*lineAndSpace) + lineAndSpace;
         }
-
     }
 #endif
 }

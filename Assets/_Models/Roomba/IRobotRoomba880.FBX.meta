@@ -1,0 +1,158 @@
+fileFormatVersion: 2
+guid: 6a36247b64f70e540b41a4a5d621ef7e
+timeCreated: 1481930392
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: IRobotRooma_880_body_detail-UP_buttom
+    100002: //RootNode
+    100004: IRobotRoomba880_body_wheels
+    100006: IRobotRoomba_880_body_brush-003
+    100008: IRobotRoomba_880_body_brush-1
+    100010: IRobotRoomba_880_body_brush-2
+    100012: IRobotRoomba_880_body_brush-3
+    100014: IRobotRoomba_880_body_buttom
+    100016: IRobotRoomba_880_body_detail-2
+    100018: IRobotRoomba_880_body_detail-3
+    100020: IRobotRoomba_880_body_detail-4
+    100022: IRobotRoomba_880_body_detail-5
+    100024: IRobotRoomba_880_body_glass
+    100026: IRobotRoomba_880_body_screw
+    100028: IRobotRoomba_880_body_shaft-1
+    100030: IRobotRoomba_880_body_shaft-2
+    100032: IRobotRoomba_880_body_UP_panel
+    400000: IRobotRooma_880_body_detail-UP_buttom
+    400002: //RootNode
+    400004: IRobotRoomba880_body_wheels
+    400006: IRobotRoomba_880_body_brush-003
+    400008: IRobotRoomba_880_body_brush-1
+    400010: IRobotRoomba_880_body_brush-2
+    400012: IRobotRoomba_880_body_brush-3
+    400014: IRobotRoomba_880_body_buttom
+    400016: IRobotRoomba_880_body_detail-2
+    400018: IRobotRoomba_880_body_detail-3
+    400020: IRobotRoomba_880_body_detail-4
+    400022: IRobotRoomba_880_body_detail-5
+    400024: IRobotRoomba_880_body_glass
+    400026: IRobotRoomba_880_body_screw
+    400028: IRobotRoomba_880_body_shaft-1
+    400030: IRobotRoomba_880_body_shaft-2
+    400032: IRobotRoomba_880_body_UP_panel
+    2300000: IRobotRooma_880_body_detail-UP_buttom
+    2300002: IRobotRoomba880_body_wheels
+    2300004: IRobotRoomba_880_body_brush-003
+    2300006: IRobotRoomba_880_body_brush-1
+    2300008: IRobotRoomba_880_body_brush-2
+    2300010: IRobotRoomba_880_body_brush-3
+    2300012: IRobotRoomba_880_body_buttom
+    2300014: IRobotRoomba_880_body_detail-2
+    2300016: IRobotRoomba_880_body_detail-3
+    2300018: IRobotRoomba_880_body_detail-4
+    2300020: IRobotRoomba_880_body_detail-5
+    2300022: IRobotRoomba_880_body_glass
+    2300024: IRobotRoomba_880_body_screw
+    2300026: IRobotRoomba_880_body_shaft-1
+    2300028: IRobotRoomba_880_body_shaft-2
+    2300030: IRobotRoomba_880_body_UP_panel
+    3300000: IRobotRooma_880_body_detail-UP_buttom
+    3300002: IRobotRoomba880_body_wheels
+    3300004: IRobotRoomba_880_body_brush-003
+    3300006: IRobotRoomba_880_body_brush-1
+    3300008: IRobotRoomba_880_body_brush-2
+    3300010: IRobotRoomba_880_body_brush-3
+    3300012: IRobotRoomba_880_body_buttom
+    3300014: IRobotRoomba_880_body_detail-2
+    3300016: IRobotRoomba_880_body_detail-3
+    3300018: IRobotRoomba_880_body_detail-4
+    3300020: IRobotRoomba_880_body_detail-5
+    3300022: IRobotRoomba_880_body_glass
+    3300024: IRobotRoomba_880_body_screw
+    3300026: IRobotRoomba_880_body_shaft-1
+    3300028: IRobotRoomba_880_body_shaft-2
+    3300030: IRobotRoomba_880_body_UP_panel
+    4300000: IRobotRoomba_880_body_glass
+    4300002: IRobotRoomba_880_body_shaft-1
+    4300004: IRobotRoomba_880_body_brush-1
+    4300006: IRobotRoomba_880_body_buttom
+    4300008: IRobotRoomba_880_body_shaft-2
+    4300010: IRobotRoomba_880_body_brush-003
+    4300012: IRobotRoomba_880_body_detail-2
+    4300014: IRobotRoomba_880_body_detail-3
+    4300016: IRobotRoomba_880_body_detail-4
+    4300018: IRobotRoomba_880_body_detail-5
+    4300020: IRobotRoomba_880_body_brush-2
+    4300022: IRobotRoomba_880_body_brush-3
+    4300024: IRobotRoomba_880_body_screw
+    4300026: IRobotRoomba880_body_wheels
+    4300028: IRobotRoomba_880_body_UP_panel
+    4300030: IRobotRooma_880_body_detail-UP_buttom
+    9500000: //RootNode
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 180
+    normalImportMode: 0
+    tangentImportMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

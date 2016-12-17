@@ -1,60 +1,38 @@
-﻿/************************************************************************************
-
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
-
-Licensed under the Oculus VR Rift SDK License Version 3.2 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
-which is provided at the time of installation or download, or which
-otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-
-http://www.oculusvr.com/licenses/LICENSE-3.2
-
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-************************************************************************************/
-
+using System;
 using UnityEngine;
 
-namespace UnitySampleAssets.Utility
+namespace UnityStandardAssets.Utility
 {
-
     public class SimpleActivatorMenu : MonoBehaviour
     {
-
         // An incredibly simple menu which, when given references
         // to gameobjects in the scene
-
         public GUIText camSwitchButton;
         public GameObject[] objects;
-        private int currentActiveObject;
+
+
+        private int m_CurrentActiveObject;
+
 
         private void OnEnable()
         {
             // active object starts from first in array
-            currentActiveObject = 0;
-            camSwitchButton.text = objects[currentActiveObject].name;
+            m_CurrentActiveObject = 0;
+            camSwitchButton.text = objects[m_CurrentActiveObject].name;
         }
+
 
         public void NextCamera()
         {
-
-            int nextactiveobject = currentActiveObject + 1 >= objects.Length ? 0 : currentActiveObject + 1;
+            int nextactiveobject = m_CurrentActiveObject + 1 >= objects.Length ? 0 : m_CurrentActiveObject + 1;
 
             for (int i = 0; i < objects.Length; i++)
             {
-
                 objects[i].SetActive(i == nextactiveobject);
             }
 
-            currentActiveObject = nextactiveobject;
-            camSwitchButton.text = objects[currentActiveObject].name;
-
+            m_CurrentActiveObject = nextactiveobject;
+            camSwitchButton.text = objects[m_CurrentActiveObject].name;
         }
     }
 }

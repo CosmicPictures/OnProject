@@ -1,31 +1,10 @@
-/************************************************************************************
-
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
-
-Licensed under the Oculus VR Rift SDK License Version 3.2 (the "License");
-you may not use the Oculus VR Rift SDK except in compliance with the License,
-which is provided at the time of installation or download, or which
-otherwise accompanies this software in either electronic or hard copy form.
-
-You may obtain a copy of the License at
-
-http://www.oculusvr.com/licenses/LICENSE-3.2
-
-Unless required by applicable law or agreed to in writing, the Oculus VR SDK
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-************************************************************************************/
-
+using System;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
-
 #endif
 
-namespace UnitySampleAssets.CrossPlatformInput
+namespace UnityStandardAssets.CrossPlatformInput
 {
     // helps with managing tilt input on mobile devices
     public class TiltInput : MonoBehaviour
@@ -37,24 +16,43 @@ namespace UnitySampleAssets.CrossPlatformInput
             SidewaysAxis,
         }
 
+
+        [Serializable]
+        public class AxisMapping
+        {
+            public enum MappingType
+            {
+                NamedAxis,
+                MousePositionX,
+                MousePositionY,
+                MousePositionZ
+            };
+
+
+            public MappingType type;
+            public string axisName;
+        }
+
+
         public AxisMapping mapping;
-        //public string axisName = "Horizontal";
         public AxisOptions tiltAroundAxis = AxisOptions.ForwardAxis;
         public float fullTiltAngle = 25;
         public float centreAngleOffset = 0;
-        private CrossPlatformInputManager.VirtualAxis steerAxis;
 
-        // Use this for initialization
+
+        private CrossPlatformInputManager.VirtualAxis m_SteerAxis;
+
+
         private void OnEnable()
         {
             if (mapping.type == AxisMapping.MappingType.NamedAxis)
             {
-                steerAxis = new CrossPlatformInputManager.VirtualAxis(mapping.axisName);
+                m_SteerAxis = new CrossPlatformInputManager.VirtualAxis(mapping.axisName);
+                CrossPlatformInputManager.RegisterVirtualAxis(m_SteerAxis);
             }
         }
 
 
-        // Update is called once per frame
         private void Update()
         {
             float angle = 0;
@@ -77,7 +75,7 @@ namespace UnitySampleAssets.CrossPlatformInput
             switch (mapping.type)
             {
                 case AxisMapping.MappingType.NamedAxis:
-                    steerAxis.Update(axisValue);
+                    m_SteerAxis.Update(axisValue);
                     break;
                 case AxisMapping.MappingType.MousePositionX:
                     CrossPlatformInputManager.SetVirtualMousePositionX(axisValue*Screen.width);
@@ -94,28 +92,13 @@ namespace UnitySampleAssets.CrossPlatformInput
 
         private void OnDisable()
         {
-            steerAxis.Remove();
-        }
-
-
-        [System.Serializable]
-        public class AxisMapping
-        {
-            public enum MappingType
-            {
-                NamedAxis,
-                MousePositionX,
-                MousePositionY,
-                MousePositionZ
-            };
-
-            public MappingType type;
-            public string axisName;
+            m_SteerAxis.Remove();
         }
     }
 }
 
-namespace UnitySampleAssets.CrossPlatformInput.Inspector
+
+namespace UnityStandardAssets.CrossPlatformInput.Inspector
 {
 #if UNITY_EDITOR
     [CustomPropertyDrawer(typeof (TiltInput.AxisMapping))]
@@ -133,15 +116,15 @@ namespace UnitySampleAssets.CrossPlatformInput.Inspector
             var indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            string[] props = new string[] {"type", "axisName"};
-            float[] widths = new float[] {.4f, .6f};
+            var props = new[] {"type", "axisName"};
+            var widths = new[] {.4f, .6f};
             if (property.FindPropertyRelative("type").enumValueIndex > 0)
             {
                 // hide name if not a named axis
-                props = new string[] {"type"};
-                widths = new float[] {1};
+                props = new[] {"type"};
+                widths = new[] {1f};
             }
-            float lineHeight = 18;
+            const float lineHeight = 18;
             for (int n = 0; n < props.Length; ++n)
             {
                 float w = widths[n]*inspectorWidth;
