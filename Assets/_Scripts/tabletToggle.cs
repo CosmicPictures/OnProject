@@ -14,6 +14,7 @@ public class tabletToggle : MonoBehaviour
     private Toggle toggle;
     public Vector3 offset;
     public float tweenDuration = 1.0f;
+    private RectTransform rect;
 
 
     public Interaction toggleInteraction;
@@ -23,11 +24,13 @@ public class tabletToggle : MonoBehaviour
     {
 
         pc = GameObject.Find("OVRCameraRig").GetComponent<PlayerController>();
+        toggle = GetComponent<Toggle>();    
+        //rect = rect.GetComponent<RectTransform>();
 
         if (!pc)
             Debug.Log("Could not find player controller!");
 
-        toggle = GetComponent<Toggle>();
+        
         if (!toggle)
             Debug.Log("No toggle found!");
 
@@ -53,6 +56,16 @@ public class tabletToggle : MonoBehaviour
                 break;
         }
     }
+
+    /*
+    private void OnEnable()
+    {
+        rect = GetComponent<RectTransform>();
+        //Debug.Log(GetComponent<RectTransform>().anchoredPosition);
+        rect.DOMove(rect.anchoredPosition3D + offset, tweenDuration);
+        //transform.DOMove(transform.position + offset,tweenDuration);
+    }
+    */
 
     private void OnTriggerEnter(Collider other)
     {

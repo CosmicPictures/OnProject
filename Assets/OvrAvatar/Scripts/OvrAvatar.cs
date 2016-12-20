@@ -58,6 +58,17 @@ public class OvrAvatar : MonoBehaviour {
     public Quaternion tabletRotation;
     public bool addCollidersToLeftBones = false;
     public bool addCollidersToRightBones = false;
+    public bool leftHandPhysicsOnFist = false;
+    public bool rightHandPhysicsOnFist = false;
+    public bool leftGrabbingObject = false;
+    public bool rightGrabbingObject = false;
+    public GameObject currentObject;
+    private SphereCollider leftHandCollider;
+    private SphereCollider rightHandCollider;
+    public Rigidbody leftHandRigid;
+    public Rigidbody rightHandRigid;
+    public float triggerGrabDeadzone = 0.1f;
+    public float grabColliderRadius = 1.0f;
     public float boneColliderRadius = 0.01f;
     const float PacketDurationSeconds = 1 / 45.0f;
     OvrAvatarPacket currentPacket;
@@ -349,8 +360,8 @@ public class OvrAvatar : MonoBehaviour {
                 SphereCollider col = t.gameObject.AddComponent<SphereCollider>();
                 col.radius = boneColliderRadius;
                 col.isTrigger = true;
-                Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
-                rigid.isKinematic = true;
+                //Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
+                //rigid.isKinematic = true;
             }
 
         }
@@ -364,10 +375,30 @@ public class OvrAvatar : MonoBehaviour {
                 SphereCollider col = t.gameObject.AddComponent<SphereCollider>();
                 col.radius = boneColliderRadius;
                 col.isTrigger = true;
-                Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
-                rigid.isKinematic = true;
+                //Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
+                //rigid.isKinematic = true;
             }
 
+        }
+
+        if(leftHandPhysicsOnFist)
+        {
+            leftHandPhysicsOnFist = false;
+
+            leftHandCollider = GameObject.Find("controller_left").AddComponent<SphereCollider>();
+            //leftHandRigid = GameObject.Find("controller_left").AddComponent<Rigidbody>();
+            leftHandCollider.radius = grabColliderRadius;
+            leftHandCollider.isTrigger = true;
+            
+        }
+        if(rightHandPhysicsOnFist)
+        {
+            rightHandPhysicsOnFist = false;
+
+            rightHandCollider = GameObject.Find("controller_right").AddComponent<SphereCollider>();
+            //rightHandRigid = GameObject.Find("controller_right").AddComponent<Rigidbody>();
+            rightHandCollider.radius = grabColliderRadius;
+            rightHandCollider.isTrigger = true;
         }
 
 
@@ -558,6 +589,35 @@ public class OvrAvatar : MonoBehaviour {
                 assetsFinishedLoading = true;
             }
         }
+        /*
+        if(leftHandCollider)
+        {
+            if ((OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger) > triggerGrabDeadzone || OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) > triggerGrabDeadzone) && !leftGrabbingObject)
+            {
+                //leftHandCollider.enabled = true;
+                leftHandCollider.isTrigger = false;
+            }
+            else
+            {
+                leftHandCollider.isTrigger = true;
+                //leftHandCollider.enabled = false;
+            }
+        }
+        if (rightHandCollider)
+        {
+            if ((OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger) > triggerGrabDeadzone || OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger) > triggerGrabDeadzone) && !rightGrabbingObject)
+            {
+                rightHandCollider.isTrigger = false;
+                //rightHandCollider.enabled = true;
+
+            }
+            else
+            {
+                rightHandCollider.isTrigger = true;
+                //rightHandCollider.enabled = false;
+            }
+        }
+        */
     }
 
     private ovrAvatarHandInputState CreateInputState(ovrAvatarTransform transform, OvrAvatarDriver.ControllerPose pose)

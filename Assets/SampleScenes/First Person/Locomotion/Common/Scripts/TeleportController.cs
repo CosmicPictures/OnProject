@@ -45,7 +45,7 @@ public class TeleportController : MonoBehaviour {
 
     public GameObject positionIndicatorPrefab;
 
-    
+    public TeleportPoint initialTP;
 
     public LayerMask teleportLayerMask;
     public bool recenterOnTeleport = false;
@@ -95,6 +95,16 @@ public class TeleportController : MonoBehaviour {
 
 	}
 
+    void Start()
+    {
+        /*
+        if(initialTP)
+        {
+            StartTeleport(initialTP);
+        }
+        */
+    }
+
     void StartTeleport(TeleportPoint tp)
     {
         teleporting = true;
@@ -105,11 +115,11 @@ public class TeleportController : MonoBehaviour {
         }
         currentTeleportPoint = tp;
         currentTeleportPoint.GetComponent<MeshRenderer>().enabled = false;
-        
+
         positionIndicator = GameObject.Instantiate<GameObject>(positionIndicatorPrefab);
         positionIndicator.transform.position = tp.GetDestTransform().position;
         initialRotation = positionIndicator.transform.rotation = tp.GetDestTransform().rotation;
-            
+        //initialRotation = tp.GetDestTransform().rotation;
         rotationAmount = 0;
     }
 

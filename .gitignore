@@ -28,3 +28,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Assets/Resources/DOTweenSettings.asset
+Assets/Resources/DOTweenSettings.asset.meta
+Assets/_Materials/TrailMat.mat
+Assets/_Materials/TrailMat.mat.meta

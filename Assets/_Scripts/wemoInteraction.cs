@@ -29,8 +29,8 @@ public class wemoInteraction : MonoBehaviour {
         }
     }
 
-    void Update () {
-
+    void Update ()
+    {
             if (Input.GetKeyDown(KeyCode.Keypad0))
             {
                 toggleDevice(Action.Off);
@@ -42,8 +42,7 @@ public class wemoInteraction : MonoBehaviour {
             else if (Input.GetKeyDown(KeyCode.Keypad2))
             {
                 checkForDevice();
-            }
-        
+            }        
     }
 
     public void toggleDevice(Action action)
