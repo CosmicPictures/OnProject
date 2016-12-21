@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
-            disableWebcam();
+            //disableWebcam();
             movie = (MovieTexture)TVScreen.texture;
             TVScreen.gameObject.SetActive(true);
             if (!movie.isPlaying)
@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour {
         }
         else
         {
-            disableMovie();
+            //disableMovie();
 
             WebcamScreen.texture = webcamTex;
             webcamTex.Play();
@@ -221,6 +221,7 @@ public class PlayerController : MonoBehaviour {
         {
             roombaScript.agent.destination = roombaScript.GenerateRandomPoint(roombaScript.navigationMesh);
             roombaScript.navigationEnabled = true;
+            roombaScript.agent.Resume();
             if (!roombaScript.audio.isPlaying)
                 roombaScript.audio.Play();
         }

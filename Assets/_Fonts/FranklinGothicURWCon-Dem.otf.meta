@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 271122676ef470943a8aec9fcce7fc74
+timeCreated: 1482266027
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: FranklinGothic URW Cond
+  fontNames:
+  - FranklinGothic URW Cond
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

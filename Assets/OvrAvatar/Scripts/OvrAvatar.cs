@@ -360,8 +360,8 @@ public class OvrAvatar : MonoBehaviour {
                 SphereCollider col = t.gameObject.AddComponent<SphereCollider>();
                 col.radius = boneColliderRadius;
                 col.isTrigger = true;
-                //Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
-                //rigid.isKinematic = true;
+                Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
+                rigid.isKinematic = true;
             }
 
         }
@@ -375,8 +375,8 @@ public class OvrAvatar : MonoBehaviour {
                 SphereCollider col = t.gameObject.AddComponent<SphereCollider>();
                 col.radius = boneColliderRadius;
                 col.isTrigger = true;
-                //Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
-                //rigid.isKinematic = true;
+                Rigidbody rigid = t.gameObject.AddComponent<Rigidbody>();
+                rigid.isKinematic = true;
             }
 
         }

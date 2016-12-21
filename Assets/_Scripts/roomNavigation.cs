@@ -31,6 +31,7 @@ public class roomNavigation : MonoBehaviour {
 
         agent = GetComponent<NavMeshAgent>();
         //agent.destination = GenerateRandomPoint(navigationMesh);
+        agent.Stop();
 		
 	}
 	
@@ -40,11 +41,21 @@ public class roomNavigation : MonoBehaviour {
         if((agent.destination - transform.position).magnitude < 0.05f && navigationEnabled)
         {
             agent.destination = GenerateRandomPoint(navigationMesh);
+            agent.Stop();
         }
         else if(audio.isPlaying && (agent.destination - transform.position).magnitude < 0.05f && !navigationEnabled)
         {
             audio.Stop();
         }
+        /*
+        if (transform.parent != null)
+            agent.Stop();
+        else
+        {
+            if(agent.isOnNavMesh)
+                agent.Resume();
+        }
+        */
 	}
 
     public Vector3 GenerateRandomPoint(Mesh mesh)

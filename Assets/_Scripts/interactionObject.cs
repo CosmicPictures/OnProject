@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-
+using UnityEngine.AI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class interactionObject : MonoBehaviour {
@@ -15,7 +15,7 @@ public class interactionObject : MonoBehaviour {
     private bool rightHovering = false;
     private Material[] mats;
     private Material initialMaterial;
-    private Renderer rend;
+    public Renderer rend;
     public float triggerGrabDeadzone = 0.1f;
     public GameObject leftHand;
     public GameObject rightHand;
@@ -24,18 +24,32 @@ public class interactionObject : MonoBehaviour {
     private Vector3 initialOffset;
     private Quaternion initialRotation;
     private Rigidbody rigid;
+    private NavMeshAgent agent;
+    
    
     public float interpolateSpeed = 0.5f;
-
+    private Vector3 initialPosition;
     private List<Vector3> positionHistory;
     private int maxListSize = 10;
+    private bool pickedUp = false;
+    private Collider col;
+    public float timeUntilFadeOut = 5f;
+    public float fadeDuration = 2f;
 
     // Use this for initialization
     void Start () {
-        initialMaterial = GetComponent<Renderer>().material;
-        rend = GetComponent<Renderer>();
+
+        if(!rend)
+            rend = GetComponent<Renderer>();
+
+        col = GetComponent<Collider>();
+        initialMaterial = rend.material;
         rigid = GetComponent<Rigidbody>();
         positionHistory = new List<Vector3>();
+        agent = GetComponent<NavMeshAgent>();
+
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
 	}
 
     // Update is called once per frame
@@ -44,11 +58,16 @@ public class interactionObject : MonoBehaviour {
         if ((OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger) > triggerGrabDeadzone || OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) > triggerGrabDeadzone) && leftHovering && !avatarScript.leftGrabbingObject && !avatarScript.rightGrabbingObject)
         {
             //Grab with left
+            if (agent)
+            {
+                agent.Stop();
+                agent.enabled = false;
+            }
             avatarScript.leftGrabbingObject = true;
             avatarScript.currentObject = this.gameObject;
             initialTransform = transform;
             rigid.useGravity = false;
-            //rigid.isKinematic = true;
+            rigid.isKinematic = true;
             /*
             
             Vector3 pos = transform.position - leftHand.transform.position;
@@ -60,6 +79,7 @@ public class interactionObject : MonoBehaviour {
             
             leftHovering = false;
             childOutline.SetActive(false);
+            StopCoroutine("fadeOutAfterTime");
         }
 
         //Drop left hand
@@ -67,22 +87,35 @@ public class interactionObject : MonoBehaviour {
         {
             avatarScript.leftGrabbingObject = false;
             transform.SetParent(null);
-
-            //rigid.isKinematic = false;
+            /*
+            if (agent)
+            {
+                agent.enabled = true;
+                agent.Resume();
+            }
+            */
+            rigid.isKinematic = false;
             rigid.useGravity = true;
             rigid.velocity = calculateExitVelocity();
             //rigid.velocity = avatarScript.leftHandRigid.velocity;
             positionHistory = new List<Vector3>();
+            StopCoroutine("fadeOutAfterTime");
+            StartCoroutine(fadeOutAfterTime(timeUntilFadeOut,fadeDuration));
         }
 
         if ((OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger) > triggerGrabDeadzone || OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger) > triggerGrabDeadzone) && rightHovering && !avatarScript.leftGrabbingObject && !avatarScript.rightGrabbingObject)
         {
             //Grab with right
             Debug.Log("Grab with right");
+            if (agent)
+            {
+                agent.Stop();
+                agent.enabled = false;
+            }
             avatarScript.rightGrabbingObject = true;
             avatarScript.currentObject = this.gameObject;   
             rigid.useGravity = false;
-            //rigid.isKinematic = true;
+            rigid.isKinematic = true;
             /*
             
             initialTransform = transform;
@@ -94,23 +127,56 @@ public class interactionObject : MonoBehaviour {
             transform.SetParent(rightHand.transform);
             rightHovering = false;
             childOutline.SetActive(false);
+            StopCoroutine("fadeOutAfterTime");
         }
 
         //Drop right hand
         else if ((OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger) <= triggerGrabDeadzone && OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger) <= triggerGrabDeadzone) && avatarScript.rightGrabbingObject && avatarScript.currentObject == this.gameObject)
         {
+            /*
+            if (agent)
+            {
+                agent.enabled = true;
+                agent.Resume();
+            }
+            */
+            
             avatarScript.rightGrabbingObject = false;
             transform.SetParent(null);
             
             rigid.useGravity = true;
             rigid.velocity = calculateExitVelocity();
-            //rigid.isKinematic = false;
+            rigid.isKinematic = false;
             //rigid.velocity = avatarScript.rightHandRigid.velocity;
             positionHistory = new List<Vector3>();
+            StopCoroutine("fadeOutAfterTime");
+            StartCoroutine(fadeOutAfterTime(timeUntilFadeOut, fadeDuration));
         }
         
 
         
+    }
+
+    IEnumerator fadeOutAfterTime(float time, float fade)
+    {
+        yield return new WaitForSeconds(time);
+        rigid.isKinematic = true;
+        col.enabled = false;
+        foreach(Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            r.material.DOColor(new Color(r.material.color.r, r.material.color.g, r.material.color.b, 0), fade);
+        }
+        rend.material.DOColor(new Color(rend.material.color.r, rend.material.color.g, rend.material.color.b, 0), fade);
+        yield return new WaitForSeconds(fade);
+        rigid.isKinematic = false;
+        col.enabled = true;
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            r.material.color = new Color(r.material.color.r, r.material.color.g, r.material.color.b, 1);
+        }
+        rend.material.color = new Color(rend.material.color.r, rend.material.color.g, rend.material.color.b, 1);
     }
 
     private void FixedUpdate()
@@ -127,7 +193,7 @@ public class interactionObject : MonoBehaviour {
             //transform.position = transform.position + (leftHand.transform.position - transform.position).normalized * interpolateSpeed;
         }
 
-        if(avatarScript.currentObject == this.gameObject)
+        if(transform.parent != null)
         {
             savePosition();
         }
@@ -148,12 +214,17 @@ public class interactionObject : MonoBehaviour {
         if(positionHistory.Count > 1)
         {
             float totalMovement = 0f;
-            for(int i = 0; i < positionHistory.Count - 1;i++)
+            Vector3 direction = Vector3.zero;
+            //for(int j = 0; j < positionHistory.Count; j++)
+                //Debug.Log(positionHistory[j]);
+            for(int i = 0; i < positionHistory.Count - 1    ;i++)
             {
                 totalMovement += (positionHistory[i + 1] - positionHistory[i]).magnitude;
+                direction += (positionHistory[i + 1] - positionHistory[i]);
+                Debug.Log(totalMovement);
             }
-            Debug.Log((positionHistory[positionHistory.Count - 1] - positionHistory[positionHistory.Count - 2]) * totalMovement / positionHistory.Count);
-            return (positionHistory[positionHistory.Count - 1] - positionHistory[positionHistory.Count - 2]) * totalMovement / positionHistory.Count;
+            Debug.Log((direction.normalized) * totalMovement /  (positionHistory.Count * Time.fixedDeltaTime));
+            return (direction.normalized) * totalMovement / (positionHistory.Count * Time.fixedDeltaTime);
         }
         else
         {
@@ -163,6 +234,10 @@ public class interactionObject : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
+        if(other.tag == "Kill")
+        {
+            transform.position = initialPosition;
+        }
         
         if (other.tag == "Hand")
         {

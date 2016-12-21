@@ -11,6 +11,7 @@ TagManager:
   - floor
   - Fire
   - Hand
+  - Kill
   layers:
   - Default
   - TransparentFX
