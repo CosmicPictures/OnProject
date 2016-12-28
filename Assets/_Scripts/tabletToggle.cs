@@ -11,6 +11,7 @@ public class tabletToggle : MonoBehaviour
 
     PlayerController pc;
     public GameObject toggles;
+    public GameObject musicButtons;
     public enum Interaction { Fire, Webcam, Video, Music, Coffee, Clean, TurnOn, Information };
     public Text informationText;
     public Text moreText;
@@ -22,11 +23,14 @@ public class tabletToggle : MonoBehaviour
     public GameObject[] lowerBullets;
 
     public Interaction toggleInteraction;
+    public bool disableOnClick = false;
+
+    private AudioSource source;
 
     // Use this for initialization
     void Start()
     {
-
+        source = GetComponent<AudioSource>();
         pc = GameObject.Find("OVRCameraRig").GetComponent<PlayerController>();
         toggle = GetComponent<Toggle>();    
         //rect = rect.GetComponent<RectTransform>();
@@ -93,11 +97,18 @@ public class tabletToggle : MonoBehaviour
                     StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
                     break;
                 case Interaction.Music:
+                    if (musicButtons.activeInHierarchy)
+                        musicButtons.SetActive(false);
+                    else
+                        musicButtons.SetActive(true);
                     pc.toggleSpeakerClips();
                     simulateClick();
                     StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
                     break;
                 case Interaction.Coffee:
+                    pc.toggleCoffee();
+                    simulateClick();
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
                     break;
                 case Interaction.Clean:
                     pc.toggleRoomba();
@@ -121,12 +132,18 @@ public class tabletToggle : MonoBehaviour
                 default:
                     break;
             }
+            if(disableOnClick)
+            {
+                gameObject.SetActive(false);
+            }
         }
 #if UNITY_EDITOR
         Debug.Log("pressed " + toggleInteraction.ToString());
 #endif  
 
     }
+
+
 
     private void toggleText()
     {
@@ -162,5 +179,9 @@ public class tabletToggle : MonoBehaviour
     {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         ExecuteEvents.Execute(toggle.gameObject, pointer, ExecuteEvents.submitHandler);
+        if(source)
+        {
+            source.Play();
+        }
     }
 }
