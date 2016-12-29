@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 224659709786762006}
   - component: {fileID: 222492162892789694}
   - component: {fileID: 114248767554171002}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 224550321694843344}
   - component: {fileID: 222616037003236036}
   - component: {fileID: 114939091206089570}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 114047455591097442}
   - component: {fileID: 135918283307852786}
   - component: {fileID: 114825890022618134}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: OnToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 224010571996396426}
   - component: {fileID: 222049272586430594}
   - component: {fileID: 114347174689766746}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Checkmark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -487,6 +487,7 @@ MonoBehaviour:
   maxRotateAngle: 20
   rotationDamping: 3
   cam: {fileID: 0}
+  outlineObjects: []
 --- !u!114 &114527683578662912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -526,6 +527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toggles: {fileID: 0}
+  musicButtons: {fileID: 0}
   informationText: {fileID: 114457715778061556}
   moreText: {fileID: 114189011574498186}
   offset: {x: 0, y: 0, z: 0}
@@ -537,6 +539,7 @@ MonoBehaviour:
   - {fileID: 1846618036088420}
   - {fileID: 1954700898402714}
   toggleInteraction: 7
+  disableOnClick: 0
 --- !u!114 &114857027453948732
 MonoBehaviour:
   m_ObjectHideFlags: 1

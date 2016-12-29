@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayerController : MonoBehaviour {
 
     public GameObject firePS;
+    public GameObject coffeePS;
     public GameObject roomba;
     public MovieTexture movie;
     private AudioClip movieAudio;
@@ -26,15 +28,23 @@ public class PlayerController : MonoBehaviour {
     public bool movieEnabled = true;
     public bool webcamEnabled = false;
     public bool roombaEnabled = false;
+    public bool coffeeEnabled = false;
+    public bool speakersEnabled = false;
     public int targetFPS = 90;
     public float buttonCooldown = 0.25f;
     public bool canPressButton = true;
     public float hapticPulseDuration = 0.2f;
     private roomNavigation roombaScript;
+    public float coffeeDelayTime = 5.0f;
+    public float coffeeFillTime = 5.0f;
+    public GameObject coffeeFill;
+    private Tweener coffeeScaleTween;
+    private Tweener coffeeMoveTween;
+    private float coffeeInitialY;
 
 	// Use this for initialization
 	void Start () {
-
+        coffeeInitialY = coffeeFill.transform.localPosition.y;
         Application.targetFrameRate = targetFPS;
 
         roombaScript = roomba.GetComponent<roomNavigation>();
@@ -64,16 +74,12 @@ public class PlayerController : MonoBehaviour {
         securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
         securityScreen.texture = securityTex;
 
-        try
-        {
+        if (WebCamTexture.devices.Length > 0)
             securityTex.Play();
-        }
-        catch
-        {
-            Debug.Log("Failed to find webcam");
-        }
-            
+        else
+            Debug.Log("No webcams found!");
 
+           
 
         fireEnabled = !fireEnabled;
         toggleFire();
@@ -153,7 +159,8 @@ public class PlayerController : MonoBehaviour {
             //disableMovie();
 
             WebcamScreen.texture = webcamTex;
-            webcamTex.Play();
+            if (WebCamTexture.devices.Length > 0)
+                webcamTex.Play();
 
             WebcamScreen.gameObject.SetActive(true);
             //movie = (MovieTexture)WebcamScreen.texture;
@@ -227,6 +234,66 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void toggleCoffee()
+    {
+        coffeeEnabled = !coffeeEnabled;
+
+        if (coffeeEnabled)
+        {
+            StopCoroutine("fillCoffeeAfterTime");
+            StartCoroutine(fillCoffeeAfterTime(coffeeDelayTime));
+        }
+        else
+        {
+            StopCoroutine("fillCoffeeAfterTime");
+            if (coffeeScaleTween != null && coffeeScaleTween.IsPlaying())
+            {
+                coffeeScaleTween.Pause();
+                coffeeMoveTween.Pause();
+            }
+        }
+
+        foreach (ParticleSystem ps in coffeePS.GetComponentsInChildren<ParticleSystem>())
+        {
+            if (!coffeeEnabled)
+                ps.Stop();
+            else
+                ps.Play();
+        }
+        AudioSource source = coffeePS.GetComponent<AudioSource>();
+        if (source)
+        {
+            if (!coffeeEnabled)
+            {
+                source.Stop();
+            }
+            else
+                source.Play();
+        }
+
+    }
+
+    IEnumerator fillCoffeeAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        if (!coffeeFill.activeInHierarchy)
+        {
+            coffeeFill.SetActive(true);
+        }
+        if (coffeeScaleTween != null && !coffeeScaleTween.IsPlaying())
+        {
+            coffeeScaleTween.Play();
+            coffeeMoveTween.Play();
+        }
+        else
+        {
+            coffeeScaleTween = coffeeFill.transform.DOScaleY(1.0f, coffeeFillTime);
+            coffeeMoveTween = coffeeFill.transform.DOLocalMoveY(0f, coffeeFillTime);
+        }
+        
+        
+    }
+
     public void toggleFire()
     {
         fireEnabled = !fireEnabled;
@@ -262,6 +329,63 @@ public class PlayerController : MonoBehaviour {
 
     public void toggleSpeakerClips()
     {
+        speakersEnabled = !speakersEnabled;
+
+        if (speakersEnabled)
+        {
+            if (speakerClips[speakerClipIndex])
+            {
+                for (int i = 0; i < speakers.Length; i++)
+                {
+                    speakers[i].Stop();
+                    speakers[i].clip = loadClips[i, speakerClipIndex];
+                    speakers[i].Play();
+                }
+            }
+            else
+            {
+                foreach (AudioSource source in speakers)
+                {
+                    source.Stop();
+                }
+            }
+        }
+        else
+        {
+            foreach (AudioSource source in speakers)
+            {
+                source.Stop();
+            }
+        }
+    }
+
+    public void previousSong()
+    {
+        speakerClipIndex--;
+
+        if (speakerClipIndex < 0)
+            speakerClipIndex = speakerClips.Length-1;
+
+        if (speakerClips[speakerClipIndex])
+        {
+            for (int i = 0; i < speakers.Length; i++)
+            {
+                speakers[i].Stop();
+                speakers[i].clip = loadClips[i, speakerClipIndex];
+                speakers[i].Play();
+            }
+        }
+        else
+        {
+            foreach (AudioSource source in speakers)
+            {
+                source.Stop();
+            }
+        }
+    }
+
+    public void nextSong()
+    {
         speakerClipIndex++;
 
         if (speakerClipIndex >= speakerClips.Length)
@@ -269,16 +393,16 @@ public class PlayerController : MonoBehaviour {
 
         if (speakerClips[speakerClipIndex])
         {
-            for(int i = 0; i < speakers.Length; i++)
+            for (int i = 0; i < speakers.Length; i++)
             {
                 speakers[i].Stop();
                 speakers[i].clip = loadClips[i, speakerClipIndex];
                 speakers[i].Play();
-            }   
+            }
         }
         else
         {
-            foreach(AudioSource source in speakers)
+            foreach (AudioSource source in speakers)
             {
                 source.Stop();
             }
