@@ -134,7 +134,14 @@ public class tabletToggle : MonoBehaviour
             }
             if(disableOnClick)
             {
-                gameObject.SetActive(false);
+                GetComponent<Collider>().enabled = false;
+                if(GetComponent<Image>())
+                    GetComponent<Image>().enabled = false;
+                foreach(Image i in GetComponentsInChildren<Image>())
+                {
+                    i.enabled = false;
+                }
+                //gameObject.SetActive(false);
             }
         }
 #if UNITY_EDITOR
@@ -151,13 +158,21 @@ public class tabletToggle : MonoBehaviour
         {
             informationText.enabled = false;
             moreText.enabled = true;
-            foreach (GameObject g in upperBullets)
+            if (upperBullets.Length > 0)
             {
-                g.SetActive(false);
+                foreach (GameObject g in upperBullets)
+                {
+                    if(g)
+                        g.SetActive(false);
+                }
             }
-            foreach(GameObject g in lowerBullets)
+            if (lowerBullets.Length > 0)
             {
-                g.SetActive(true);
+                foreach (GameObject g in lowerBullets)
+                {
+                    if(g)
+                        g.SetActive(true);
+                }
             }
         }
         else
@@ -166,11 +181,13 @@ public class tabletToggle : MonoBehaviour
             moreText.enabled = false;
             foreach (GameObject g in upperBullets)
             {
-                g.SetActive(true);
+                if(g)
+                    g.SetActive(true);
             }
             foreach (GameObject g in lowerBullets)
             {
-                g.SetActive(false);
+                if(g)
+                    g.SetActive(false);
             }
         }
     }

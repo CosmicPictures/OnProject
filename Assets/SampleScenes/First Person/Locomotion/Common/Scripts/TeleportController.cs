@@ -49,7 +49,11 @@ public class TeleportController : MonoBehaviour {
 
     public LayerMask teleportLayerMask;
     public bool recenterOnTeleport = false;
-
+    public ArduinoController arduinoController;
+    public TeleportPoint[] fanTP;
+    public TeleportPoint[] heaterTP;
+    private List<TeleportPoint> heaterList;
+    private List<TeleportPoint> fanList;
     private GameObject positionIndicator;
     private TeleportPoint currentTeleportPoint;
     private float rotationAmount;
@@ -103,6 +107,15 @@ public class TeleportController : MonoBehaviour {
             StartTeleport(initialTP);
         }
         */
+
+        heaterList = new List<TeleportPoint>();
+        fanList = new List<TeleportPoint>();
+
+        foreach (TeleportPoint t in heaterTP)
+            heaterList.Add(t);
+
+        foreach (TeleportPoint t in fanTP)
+            fanList.Add(t);
     }
 
     void StartTeleport(TeleportPoint tp)
@@ -148,9 +161,9 @@ public class TeleportController : MonoBehaviour {
         if(recenterOnTeleport && centerEye)
         {
 #if UNITY_EDITOR
-            Debug.Log(transform.position);
-            Debug.Log(destPosition);
-            Debug.Log(centerEye.position);
+            //Debug.Log(transform.position);
+            //Debug.Log(destPosition);
+            //Debug.Log(centerEye.position);
 #endif
             transform.position = new Vector3(destPosition.x - centerEye.localPosition.x, destPosition.y, destPosition.z - centerEye.localPosition.z);
 
@@ -173,6 +186,30 @@ public class TeleportController : MonoBehaviour {
         else
         {
             transform.rotation = destRotation;
+        }
+
+        //Check for heater
+        if( heaterList.Contains( currentTeleportPoint) )
+        {
+            if (!arduinoController.heaterOn)
+                arduinoController.turnHeaterOn();
+        }
+        else
+        {
+            if (arduinoController.heaterOn)
+                arduinoController.turnHeaterOff();
+        }
+
+        //Check for fan
+        if (fanList.Contains(currentTeleportPoint))
+        {
+            if (!arduinoController.fanOn)
+                arduinoController.turnFanOn();
+        }
+        else
+        {
+            if (arduinoController.fanOn)
+                arduinoController.turnFanOff();
         }
 
         yield return new WaitForSeconds(fadeLength);

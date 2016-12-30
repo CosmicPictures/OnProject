@@ -102,7 +102,22 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-	}
+        //Disable fire ps and sound on start
+        foreach (ParticleSystem ps in firePS.GetComponentsInChildren<ParticleSystem>())
+        {
+            ps.Stop();
+        }
+        foreach (Light l in firePS.GetComponentsInChildren<Light>())
+        {
+            l.gameObject.SetActive(false);
+        }
+        AudioSource source = firePS.GetComponent<AudioSource>();
+        if (source)
+        {
+            source.Stop();
+        }
+
+    }
 
     public void toggleTV()
     {

@@ -106,7 +106,7 @@ public class interactionObject : MonoBehaviour {
         if ((OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger) > triggerGrabDeadzone || OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger) > triggerGrabDeadzone) && rightHovering && !avatarScript.leftGrabbingObject && !avatarScript.rightGrabbingObject)
         {
             //Grab with right
-            Debug.Log("Grab with right");
+            //Debug.Log("Grab with right");
             if (agent)
             {
                 agent.Stop();
@@ -221,9 +221,9 @@ public class interactionObject : MonoBehaviour {
             {
                 totalMovement += (positionHistory[i + 1] - positionHistory[i]).magnitude;
                 direction += (positionHistory[i + 1] - positionHistory[i]);
-                Debug.Log(totalMovement);
+                //Debug.Log(totalMovement);
             }
-            Debug.Log((direction.normalized) * totalMovement /  (positionHistory.Count * Time.fixedDeltaTime));
+            //Debug.Log((direction.normalized) * totalMovement /  (positionHistory.Count * Time.fixedDeltaTime));
             return (direction.normalized) * totalMovement / (positionHistory.Count * Time.fixedDeltaTime);
         }
         else
@@ -254,7 +254,7 @@ public class interactionObject : MonoBehaviour {
                 //Empty hand
                 if (!avatarScript.rightGrabbingObject)
                 {
-                    Debug.Log("check collision");
+                    //Debug.Log("check collision");
                     rightHovering = true;
                 }
 
@@ -283,7 +283,7 @@ public class interactionObject : MonoBehaviour {
             }
             else if (other.name == "controller_right")
             {
-                Debug.Log("exit collision");
+                //Debug.Log("exit collision");
                 rightHovering = false;
             }
         }
