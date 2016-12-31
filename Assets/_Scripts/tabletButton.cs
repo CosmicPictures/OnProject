@@ -73,12 +73,12 @@ public class tabletButton : MonoBehaviour
                 case Action.Previous:
                     pc.previousSong();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Action.Next:
                     pc.nextSong();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 default:
                     break;

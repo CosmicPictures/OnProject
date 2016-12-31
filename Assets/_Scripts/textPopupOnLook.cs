@@ -74,15 +74,15 @@ public class textPopupOnLook : MonoBehaviour {
     {
         foreach (Text t in copy)
         {
-            //t.DOFade(1, fadeDuration);
-            t.DOBlendableColor(new Color(t.color.r, t.color.g, t.color.b, 1), fadeDuration);
+            t.DOFade(1, fadeDuration);
+            //t.DOBlendableColor(new Color(t.color.r, t.color.g, t.color.b, 1), fadeDuration);
             //t.DOColor(new Color(t.color.r, t.color.g, t.color.b, 1), fadeDuration);
         }
         foreach (Image img in GetComponentsInChildren<Image>())
         {
-            //img.DOFade(1, fadeDuration);
+            img.DOFade(1, fadeDuration);
             //img.DOColor(new Color(img.color.r, img.color.g, img.color.b, 1), fadeDuration);
-            img.DOBlendableColor(new Color(img.color.r, img.color.g, img.color.b, 1), fadeDuration);
+            //img.DOBlendableColor(new Color(img.color.r, img.color.g, img.color.b, 1), fadeDuration);
         }
         if (outlineObjects.Length > 0)
         {
@@ -102,14 +102,14 @@ public class textPopupOnLook : MonoBehaviour {
     {
         foreach (Text t in copy)
         {
-            //t.DOFade(0, fadeDuration);
+            t.DOFade(0, fadeDuration);
             //t.DOColor(new Color(t.color.r, t.color.g, t.color.b, 0), fadeDuration);
-            t.DOBlendableColor(new Color(t.color.r, t.color.g, t.color.b, 0), fadeDuration);
+            //t.DOBlendableColor(new Color(t.color.r, t.color.g, t.color.b, 0), fadeDuration);
         }
         foreach (Image img in GetComponentsInChildren<Image>())
         {
-            //img.DOFade(0, fadeDuration);
-            img.DOBlendableColor(new Color(img.color.r, img.color.g, img.color.b, 0), fadeDuration);
+            img.DOFade(0, fadeDuration);
+            //img.DOBlendableColor(new Color(img.color.r, img.color.g, img.color.b, 0), fadeDuration);
             //img.DOColor(new Color(img.color.r, img.color.g, img.color.b, 0), fadeDuration);
         }
         if (outlineObjects.Length > 0)

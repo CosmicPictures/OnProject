@@ -57,7 +57,7 @@ public class OVRInspector : MonoBehaviour
     [Tooltip("Key to hide UI")]
     public KeyCode hideKey = KeyCode.Escape;
     [Tooltip("Gamepad button to show/hide UI")]
-    public OVRInput.Button showButton = OVRInput.Button.Start;
+    public OVRInput.Button showButton;
 
     [Header("UI Materials")]
     [Tooltip("Material used for UI elements")]

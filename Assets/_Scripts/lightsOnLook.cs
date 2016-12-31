@@ -50,6 +50,7 @@ public class lightsOnLook : MonoBehaviour {
                 l.gameObject.SetActive(true);
             }
         }
+        GetComponent<Collider>().enabled = false;
         //Debug.Log("Show over state");
         //m_Renderer.material = m_OverMaterial;
     }

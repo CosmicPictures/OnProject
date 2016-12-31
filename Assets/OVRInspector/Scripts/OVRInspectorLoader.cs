@@ -54,6 +54,7 @@ public class OVRInspectorLoader : MonoBehaviour
         {
             OVRInspector inspectorPrefab = (OVRInspector)Resources.Load("Prefabs/OVRInspector", typeof(OVRInspector));
             Instantiate(inspectorPrefab).name = "OVRInspector";
+            inspectorPrefab.showButton = OVRInput.Button.None;
         }
 
         // Register event handlers

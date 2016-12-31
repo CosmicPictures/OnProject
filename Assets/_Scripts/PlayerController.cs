@@ -41,6 +41,13 @@ public class PlayerController : MonoBehaviour {
     private Tweener coffeeScaleTween;
     private Tweener coffeeMoveTween;
     private float coffeeInitialY;
+    public TeleportController tpController;
+    private bool webcamSet = false;
+
+    private int screenshotNum = 0;
+
+    public float maxTimeOutOfHMDBeforeLoad = 20f;
+    private float currentTimeOutOfHMD = 0f;
 
 	// Use this for initialization
 	void Start () {
@@ -66,16 +73,19 @@ public class PlayerController : MonoBehaviour {
         movieAudio = movie.audioClip;
         movieAudioSource.clip = movieAudio;
         webcamTex = new WebCamTexture();
-        webcamTex.requestedWidth = (int)WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
-        webcamTex.requestedHeight = (int)WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+        webcamTex.requestedWidth = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.x);
+        webcamTex.requestedHeight = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.y);
 
         securityTex = webcamTex;
-        securityTex.requestedWidth = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
-        securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+        //securityTex.requestedWidth = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
+        //securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
         securityScreen.texture = securityTex;
 
         if (WebCamTexture.devices.Length > 0)
+        {
+            webcamTex.Play();
             securityTex.Play();
+        }
         else
             Debug.Log("No webcams found!");
 
@@ -183,19 +193,44 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (OVRPlugin.userPresent && currentTimeOutOfHMD > 0)
+            currentTimeOutOfHMD = 0;
+        else if (!OVRPlugin.userPresent)
+        {
+            currentTimeOutOfHMD += Time.deltaTime;
+            /*
+#if UNITY_EDITOR
+            Debug.Log(currentTimeOutOfHMD);
+#endif
+*/
+            if(currentTimeOutOfHMD > maxTimeOutOfHMDBeforeLoad)
+            {
+                //TODO: Load main
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update () {
-		
+
+
+
         if(Input.GetKeyDown(KeyCode.Escape))
         {
+            //TODO: Load main menu
+
+            /*
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #elif UNITY_STANDALONE
             Application.Quit();
 #endif
+            */
         }
 
-
+        /*
         if (Input.GetKeyDown(KeyCode.F))
         {
             
@@ -219,15 +254,45 @@ public class PlayerController : MonoBehaviour {
         {
             toggleRoomba();
         }
+        */
 
-            //Sync speakers
-            if (masterSpeaker.isPlaying)
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            //TODO: Reload current level
+        }
+#if UNITY_STANDALONE
+        if (Input.GetKeyDown(KeyCode.P) || (OVRInput.GetDown(OVRInput.Button.Start)))
+        {
+
+            Application.CaptureScreenshot("Assets/Screenshots/Screenshot_" + screenshotNum + ".png");
+            screenshotNum++;
+        }
+#endif
+
+        //Sync speakers
+        if (masterSpeaker.isPlaying)
         {
             foreach(AudioSource slave in slaveSpeakers)
             {
                 slave.timeSamples = masterSpeaker.timeSamples;
             }
         }
+
+        //if (!webcamSet)
+         //   checkWebcamSet();
+    }
+
+    public void checkWebcamSet()
+    {
+        if (webcamTex.width >= (int)WebcamScreen.transform.GetComponent<RectTransform>().sizeDelta.x)
+        {
+
+        }
+            
+
+        webcamTex.requestedWidth = (int)WebcamScreen.transform.GetComponent<RectTransform>().sizeDelta.x;
+        webcamSet = true;
+        Debug.Log("Webcam resolution set");
     }
 
     public void toggleRoomba()
@@ -236,14 +301,19 @@ public class PlayerController : MonoBehaviour {
 
         if (!roombaEnabled)
         {
-            roombaScript.agent.destination = roombaScript.initialPosition;
+            if (roombaScript.agent.isOnNavMesh)
+                roombaScript.agent.destination = roombaScript.initialPosition;
             roombaScript.navigationEnabled = false;
         }
         else
         {
-            roombaScript.agent.destination = roombaScript.GenerateRandomPoint(roombaScript.navigationMesh);
+            
             roombaScript.navigationEnabled = true;
-            roombaScript.agent.Resume();
+            if (roombaScript.agent.isOnNavMesh)
+            {
+                roombaScript.agent.destination = roombaScript.GenerateRandomPoint(roombaScript.navigationMesh);
+                roombaScript.agent.Resume();
+            }
             if (!roombaScript.audio.isPlaying)
                 roombaScript.audio.Play();
         }
@@ -340,6 +410,19 @@ public class PlayerController : MonoBehaviour {
             else
                 source.Play();
         }
+
+        if(fireEnabled && tpController.heaterList.Contains(tpController.currentTeleportPoint) && !tpController.arduinoController.heaterOn)
+        {
+            tpController.arduinoController.turnHeaterOn();
+        }
+
+        if (!fireEnabled && tpController.arduinoController.heaterOn)
+        {
+            tpController.arduinoController.turnHeaterOff();
+        }
+
+
+
     }
 
     public void toggleSpeakerClips()
@@ -424,10 +507,12 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public IEnumerator disableInputForTime(float time)
+    public IEnumerator disableInputForTime(float time, bool leftHaptic = false, bool rightHaptic = false)
     {
-        TriggerHapticPulse(hapticPulseDuration, OVRInput.Controller.LTouch);
-        TriggerHapticPulse(hapticPulseDuration, OVRInput.Controller.RTouch);
+        if(leftHaptic)
+            TriggerHapticPulse(hapticPulseDuration, OVRInput.Controller.LTouch);
+        if(rightHaptic)
+            TriggerHapticPulse(hapticPulseDuration, OVRInput.Controller.RTouch);
         canPressButton = false;
         yield return new WaitForSeconds(time);
         canPressButton = true;

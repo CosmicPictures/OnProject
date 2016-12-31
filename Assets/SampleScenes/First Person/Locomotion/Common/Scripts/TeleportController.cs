@@ -52,10 +52,11 @@ public class TeleportController : MonoBehaviour {
     public ArduinoController arduinoController;
     public TeleportPoint[] fanTP;
     public TeleportPoint[] heaterTP;
-    private List<TeleportPoint> heaterList;
-    private List<TeleportPoint> fanList;
+    public PlayerController pc;
+    public List<TeleportPoint> heaterList;
+    public List<TeleportPoint> fanList;
     private GameObject positionIndicator;
-    private TeleportPoint currentTeleportPoint;
+    public TeleportPoint currentTeleportPoint;
     private float rotationAmount;
     private Quaternion initialRotation;
     private bool teleporting = false;
@@ -63,7 +64,6 @@ public class TeleportController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
         RaycastHit hit;
         if (positionIndicator)
         {
@@ -77,7 +77,7 @@ public class TeleportController : MonoBehaviour {
                 }
             }
 
-            if (OVRInput.GetUp(teleportButton) || OVRInput.GetUp(OVRInput.Button.Two) || OVRInput.GetUp(OVRInput.Button.Three) || OVRInput.GetUp(OVRInput.Button.Four) || Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0))
+            if (OVRInput.GetUp(teleportButton) || OVRInput.GetUp(OVRInput.Button.Two) || OVRInput.GetUp(OVRInput.Button.Three) || OVRInput.GetUp(OVRInput.Button.Four) || OVRInput.GetUp(OVRInput.Button.PrimaryThumbstick) || Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0))
             {
                 DoTeleport(positionIndicator.transform);
                 
@@ -89,7 +89,7 @@ public class TeleportController : MonoBehaviour {
             TeleportPoint tp = hit.collider.gameObject.GetComponent<TeleportPoint>();
             tp.OnLookAt();
 
-            if (teleportEnabled && !teleporting && (OVRInput.GetDown(teleportButton) || OVRInput.GetDown(OVRInput.Button.Two) || OVRInput.GetDown(OVRInput.Button.Three) || OVRInput.GetDown(OVRInput.Button.Four) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+            if (teleportEnabled && !teleporting && (OVRInput.GetDown(teleportButton) || OVRInput.GetDown(OVRInput.Button.Two) || OVRInput.GetDown(OVRInput.Button.Three) || OVRInput.GetDown(OVRInput.Button.Four) || OVRInput.GetUp(OVRInput.Button.PrimaryThumbstick) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
             {
                 StartTeleport(tp);
             }
@@ -191,24 +191,27 @@ public class TeleportController : MonoBehaviour {
         //Check for heater
         if( heaterList.Contains( currentTeleportPoint) )
         {
-            if (!arduinoController.heaterOn)
-                arduinoController.turnHeaterOn();
+            if(pc.fireEnabled)
+                if (arduinoController)
+                    if (!arduinoController.heaterOn )
+                        arduinoController.turnHeaterOn();
         }
         else
         {
-            if (arduinoController.heaterOn)
+            if(arduinoController)
                 arduinoController.turnHeaterOff();
         }
 
         //Check for fan
         if (fanList.Contains(currentTeleportPoint))
         {
-            if (!arduinoController.fanOn)
-                arduinoController.turnFanOn();
+            if(arduinoController)
+                if (!arduinoController.fanOn)
+                    arduinoController.turnFanOn();
         }
         else
         {
-            if (arduinoController.fanOn)
+            if (arduinoController)
                 arduinoController.turnFanOff();
         }
 

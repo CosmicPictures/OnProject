@@ -36,6 +36,8 @@ public class interactionObject : MonoBehaviour {
     public float timeUntilFadeOut = 5f;
     public float fadeDuration = 2f;
 
+    public roomNavigation roombaScript;
+
     // Use this for initialization
     void Start () {
 
@@ -172,6 +174,17 @@ public class interactionObject : MonoBehaviour {
         col.enabled = true;
         transform.position = initialPosition;
         transform.rotation = initialRotation;
+
+        if(roombaScript)
+        {
+            
+            if (roombaScript.agent.isOnNavMesh && roombaScript.navigationEnabled)
+            {
+                roombaScript.agent.destination = roombaScript.GenerateRandomPoint(roombaScript.navigationMesh);
+                roombaScript.agent.Resume();
+            }
+        }
+
         foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
             r.material.color = new Color(r.material.color.r, r.material.color.g, r.material.color.b, 1);

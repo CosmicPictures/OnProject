@@ -24,8 +24,11 @@ public class tabletToggle : MonoBehaviour
 
     public Interaction toggleInteraction;
     public bool disableOnClick = false;
+    public Collider disableOther;
 
     private AudioSource source;
+
+    private int numColliding = 0;
 
     // Use this for initialization
     void Start()
@@ -77,24 +80,26 @@ public class tabletToggle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (pc.canPressButton)
+        numColliding++;
+
+        if (pc.canPressButton && numColliding <=1 )
         {
             switch (toggleInteraction)
             {
                 case Interaction.Fire:
                     pc.toggleFire();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Webcam:
                     pc.toggleWebcam();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Video:
                     pc.toggleTV();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Music:
                     if (musicButtons.activeInHierarchy)
@@ -103,22 +108,22 @@ public class tabletToggle : MonoBehaviour
                         musicButtons.SetActive(true);
                     pc.toggleSpeakerClips();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Coffee:
                     pc.toggleCoffee();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Clean:
                     pc.toggleRoomba();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Information:
                     toggleText();
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, false, true));
                     break;
                 case Interaction.TurnOn:
                     //GetComponent<Collider>().enabled = false;
@@ -127,7 +132,7 @@ public class tabletToggle : MonoBehaviour
                     else
                         toggles.SetActive(true);
                     simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown));
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 default:
                     break;
@@ -142,6 +147,8 @@ public class tabletToggle : MonoBehaviour
                     i.enabled = false;
                 }
                 //gameObject.SetActive(false);
+                if (disableOther)
+                    disableOther.enabled = false;
             }
         }
 #if UNITY_EDITOR
@@ -150,7 +157,10 @@ public class tabletToggle : MonoBehaviour
 
     }
 
-
+    private void OnTriggerExit(Collider other)
+    {
+        numColliding--;
+    }
 
     private void toggleText()
     {
