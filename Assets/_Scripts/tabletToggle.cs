@@ -69,15 +69,21 @@ public class tabletToggle : MonoBehaviour
         }
     }
 
-    /*
+    
     private void OnEnable()
     {
-        rect = GetComponent<RectTransform>();
-        //Debug.Log(GetComponent<RectTransform>().anchoredPosition);
-        rect.DOMove(rect.anchoredPosition3D + offset, tweenDuration);
-        //transform.DOMove(transform.position + offset,tweenDuration);
+        if(toggleInteraction == Interaction.Fire)
+        {
+            if (pc)
+            {
+                if (pc.fireEnabled)
+                {
+                    toggle.isOn = true;
+                }
+            }
+        }
     }
-    */
+    
 
     private void OnTriggerEnter(Collider other)
     {

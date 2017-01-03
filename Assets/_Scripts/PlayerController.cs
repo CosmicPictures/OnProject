@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class PlayerController : MonoBehaviour {
 
@@ -274,15 +275,22 @@ public class PlayerController : MonoBehaviour {
             loadMain();
 
         }
+        /*
 #if UNITY_STANDALONE
         if (Input.GetKeyDown(KeyCode.P) || (OVRInput.GetDown(OVRInput.Button.Start)))
         {
-
+            while(screenshotNum < 1000)
+            {
+                if (File.Exists("Assets/Screenshots/Screenshot_" + screenshotNum + ".png"))
+                    screenshotNum++;
+                else
+                    break;  
+            }
             Application.CaptureScreenshot("Assets/Screenshots/Screenshot_" + screenshotNum + ".png");
             screenshotNum++;
         }
 #endif
-
+        */
         //Sync speakers
         if (masterSpeaker.isPlaying)
         {

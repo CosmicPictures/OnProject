@@ -44,9 +44,15 @@ public class textPopupOnLook : MonoBehaviour {
             Vector3 to = new Vector3((cam.transform.position - transform.position).x, 0, (cam.transform.position - transform.position).z);
             float angle = Mathf.Clamp( Vector3.Angle(from,to) * Mathf.Sign(Vector3.Dot(from, to)), -maxRotateAngle,maxRotateAngle);
 
-            //copy.rectTransform.rotation.eulerAngles;
-            copy[0].rectTransform.rotation = Quaternion.Euler(new Vector3(initialRotation.eulerAngles.x, initialRotation.eulerAngles.y - angle, initialRotation.eulerAngles.z));
-            //copy.rectTransform.DORotate(new Vector3(initialRotation.eulerAngles.x,initialRotation.eulerAngles.y - angle, initialRotation.eulerAngles.z) , Time.deltaTime);
+            if(maxRotateAngle > 170f)
+            {
+                copy[0].rectTransform.rotation = Quaternion.LookRotation((from-to),Vector3.up);
+            }
+            else
+                copy[0].rectTransform.rotation = Quaternion.Euler(new Vector3(initialRotation.eulerAngles.x, initialRotation.eulerAngles.y - angle, initialRotation.eulerAngles.z));
+
+
+
         }
     }
 

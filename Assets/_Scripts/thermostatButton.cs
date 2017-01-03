@@ -36,8 +36,16 @@ public class thermostatButton : MonoBehaviour {
             if (!toggleOther)
                 toggleOther = GameObject.Find("FireToggle").GetComponent<tabletToggle>();
 
-            if(toggleOther)
-                toggleOther.simulateClick();
+            if (toggleOther)
+            {
+                if (toggleOther.gameObject.activeInHierarchy)
+                    toggleOther.simulateClick();
+                else
+                {
+                    toggleOther.GetComponent<Toggle>().isOn = !toggleOther.GetComponent<Toggle>().isOn;
+                }
+                
+            }
         }
 
     }
