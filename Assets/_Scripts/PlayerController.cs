@@ -54,9 +54,10 @@ public class PlayerController : MonoBehaviour {
 
     public float maxTimeOutOfHMDBeforeLoad = 20f;
     private float currentTimeOutOfHMD = 0f;
+    private static string persistentDataPath = null;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         coffeeInitialY = coffeeFill.transform.localPosition.y;
         Application.targetFrameRate = targetFPS;
 
@@ -118,6 +119,9 @@ public class PlayerController : MonoBehaviour {
                 slaveSpeakers[i - 1] = speakers[i];
             }
         }
+
+        if (persistentDataPath == null)
+            persistentDataPath = Application.persistentDataPath;
     }
 
     public void toggleTV()
@@ -275,22 +279,22 @@ public class PlayerController : MonoBehaviour {
             loadMain();
 
         }
-        /*
-#if UNITY_STANDALONE
+        
+
         if (Input.GetKeyDown(KeyCode.P) || (OVRInput.GetDown(OVRInput.Button.Start)))
         {
             while(screenshotNum < 1000)
             {
-                if (File.Exists("Assets/Screenshots/Screenshot_" + screenshotNum + ".png"))
+                if (File.Exists("Screenshot_" + screenshotNum.ToString() + ".png"))
                     screenshotNum++;
                 else
                     break;  
             }
-            Application.CaptureScreenshot("Assets/Screenshots/Screenshot_" + screenshotNum + ".png");
+            Debug.Log("Data Path =  " + persistentDataPath);
+            Application.CaptureScreenshot("Screenshot_" + screenshotNum.ToString() + ".png");
             screenshotNum++;
         }
-#endif
-        */
+        
         //Sync speakers
         if (masterSpeaker.isPlaying)
         {
