@@ -7,35 +7,25 @@ using System.Collections.Generic;       //Allows us to use Lists.
 
 public class ArduinoController : MonoBehaviour
 {
-
-    public static ArduinoController instance = null;
-
     public SerialBoardController sbc;
 
     public bool fanOn;
     public bool heaterOn;
 
-
-    //Awake is always called before any Start functions
-    void Awake()
+    private void Start()
     {
-        //Check if instance already exists
-        if (instance == null)
-
-            //if not, set instance to this
-            instance = this;
-
-        //If instance already exists and it's not this:
-        else if (instance != this)
-
-            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-            Destroy(gameObject);
-
-        //Sets this to not be destroyed when reloading scene
-        DontDestroyOnLoad(gameObject);
+        StartCoroutine(turnBothOff());
     }
 
-    private void Start()
+    public IEnumerator turnBothOff()
+    {
+        turnFanOff();
+        yield return new WaitForEndOfFrame();
+        turnHeaterOff();
+        yield return null;
+    }
+
+    public void resetBoth()
     {
         turnFanOff();
         turnHeaterOff();
@@ -96,5 +86,7 @@ public class ArduinoController : MonoBehaviour
         turnFanOff();
         turnHeaterOff();
     }
+
+    
 
 }

@@ -5,16 +5,21 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using System;
+using UnityEngine.SceneManagement;
 
 public class tabletButton : MonoBehaviour
 {
 
     PlayerController pc;
-    public enum Action { Previous, Next };
+    public enum Action { Previous, Next, Load };
     private Button button;
 
     public Action buttonAction;
 
+    private bool isLoading = false;
+    private string lastLoadProgress = null;
+    public Text loadingText;
+    private string loadProgress = "Loading...";
     private AudioSource source;
 
     // Use this for initialization
@@ -80,6 +85,11 @@ public class tabletButton : MonoBehaviour
                     simulateClick();
                     StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
+                case Action.Load:
+                    StartCoroutine(loadAsync());
+                    simulateClick();
+                    //StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
+                    break;
                 default:
                     break;
             }
@@ -98,5 +108,74 @@ public class tabletButton : MonoBehaviour
         {
             source.Play();
         }
+    }
+
+    IEnumerator loadAsync()
+    {
+        if (!isLoading)
+        {
+            isLoading = true;
+            GetComponent<Collider>().enabled = false;
+            AsyncOperation _async = new AsyncOperation();
+            _async = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+            loadingText.text = "Loading...";
+            _async.allowSceneActivation = false;
+
+            while (_async.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            _async.allowSceneActivation = true;
+
+            while (!_async.isDone)
+            {
+                yield return null;
+            }
+            /*
+            Scene nextScene = SceneManager.GetSceneByName(name);
+            if (nextScene.IsValid())
+            {
+                SceneManager.SetActiveScene(nextScene);
+                SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
+            }
+            */
+        }
+        /*
+        if (!isLoading)
+        {
+            isLoading = true;
+            GetComponent<Collider>().enabled = false;
+            AsyncOperation a = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+            a.allowSceneActivation = false;
+            loadingText.text = "Loading...";
+            while (!a.isDone)
+            {
+                if (a.progress < 0.9f)
+                {
+                    Debug.Log(a.progress);
+                    yield return null;
+                }
+                else // if progress >= 0.9f the scene is loaded and is ready to activate.
+                {
+
+                    a.allowSceneActivation = true;
+
+                }
+            }
+            yield return null;
+        }
+        yield return null;
+        */
+        /*
+        if (!isLoading)
+        {
+            isLoading = true;
+            GetComponent<Collider>().enabled = false;
+            yield return new WaitForSeconds(1f);
+            SceneManager.LoadScene(1);
+
+        }
+        */
     }
 }

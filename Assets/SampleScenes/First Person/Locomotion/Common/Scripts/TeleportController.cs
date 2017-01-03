@@ -61,7 +61,8 @@ public class TeleportController : MonoBehaviour {
     private Quaternion initialRotation;
     private bool teleporting = false;
 
-	
+    public tabletToggle[] informationToggles;
+
 	// Update is called once per frame
 	void Update () {
         RaycastHit hit;
@@ -199,7 +200,8 @@ public class TeleportController : MonoBehaviour {
         else
         {
             if(arduinoController)
-                arduinoController.turnHeaterOff();
+                if(arduinoController.heaterOn)
+                    arduinoController.turnHeaterOff();
         }
 
         //Check for fan
@@ -212,9 +214,16 @@ public class TeleportController : MonoBehaviour {
         else
         {
             if (arduinoController)
-                arduinoController.turnFanOff();
+                if(arduinoController.fanOn)
+                    arduinoController.turnFanOff();
         }
-
+        
+        //On teleport reset all text to default text
+        foreach(tabletToggle t in informationToggles)
+        {
+            t.setToDefaultText();
+        }
+        
         yield return new WaitForSeconds(fadeLength);
 
         teleporting = false;
@@ -226,9 +235,6 @@ public class TeleportController : MonoBehaviour {
             fadeLevel = Mathf.Clamp01(fadeLevel);
             OVRInspector.instance.fader.SetFadeLevel(fadeLevel);
         }
-
-
-
         yield return null;
     }
 }

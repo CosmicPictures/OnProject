@@ -12,7 +12,7 @@ public class tabletToggle : MonoBehaviour
     PlayerController pc;
     public GameObject toggles;
     public GameObject musicButtons;
-    public enum Interaction { Fire, Webcam, Video, Music, Coffee, Clean, TurnOn, Information };
+    public enum Interaction { Fire, Webcam, Video, Music, Coffee, Clean, Light, TurnOn, Information };
     public Text informationText;
     public Text moreText;
     private Toggle toggle;
@@ -25,6 +25,7 @@ public class tabletToggle : MonoBehaviour
     public Interaction toggleInteraction;
     public bool disableOnClick = false;
     public Collider disableOther;
+    public GameObject enableObject;
 
     private AudioSource source;
 
@@ -120,6 +121,11 @@ public class tabletToggle : MonoBehaviour
                     simulateClick();
                     StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
+                case Interaction.Light:
+                    pc.toggleLamp();
+                    simulateClick();
+                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
+                    break;
                 case Interaction.Information:
                     toggleText();
                     simulateClick();
@@ -148,7 +154,11 @@ public class tabletToggle : MonoBehaviour
                 }
                 //gameObject.SetActive(false);
                 if (disableOther)
+                {
                     disableOther.enabled = false;
+                    if (enableObject)
+                        enableObject.SetActive(true);
+                }
             }
         }
 #if UNITY_EDITOR
@@ -202,7 +212,25 @@ public class tabletToggle : MonoBehaviour
         }
     }
 
-    private void simulateClick()
+    public void setToDefaultText()
+    {
+        informationText.enabled = true;
+        moreText.enabled = false;
+        if(toggle)
+            toggle.isOn = false;
+        foreach (GameObject g in upperBullets)
+        {
+            if (g)
+                g.SetActive(true);
+        }
+        foreach (GameObject g in lowerBullets)
+        {
+            if (g)
+                g.SetActive(false);
+        }
+    }
+
+    public void simulateClick()
     {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         ExecuteEvents.Execute(toggle.gameObject, pointer, ExecuteEvents.submitHandler);

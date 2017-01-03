@@ -492,6 +492,8 @@ public class OVRManager : MonoBehaviour
 	/// </summary>
 	public bool resetTrackerOnLoad = false;
 
+    public bool setAbsoluteForward = false;
+
 	/// <summary>
 	/// True if the current platform supports virtual reality.
 	/// </summary>

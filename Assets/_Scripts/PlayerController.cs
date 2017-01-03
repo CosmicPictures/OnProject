@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
@@ -30,6 +31,9 @@ public class PlayerController : MonoBehaviour {
     public bool roombaEnabled = false;
     public bool coffeeEnabled = false;
     public bool speakersEnabled = false;
+    public bool lampEnabled = false;
+    public GameObject lampOn;
+    public GameObject lampOff;
     public int targetFPS = 90;
     public float buttonCooldown = 0.25f;
     public bool canPressButton = true;
@@ -42,6 +46,7 @@ public class PlayerController : MonoBehaviour {
     private Tweener coffeeMoveTween;
     private float coffeeInitialY;
     public TeleportController tpController;
+    public GameObject monitorCanvas;
     private bool webcamSet = false;
 
     private int screenshotNum = 0;
@@ -89,10 +94,11 @@ public class PlayerController : MonoBehaviour {
         else
             Debug.Log("No webcams found!");
 
-           
 
-        fireEnabled = !fireEnabled;
-        toggleFire();
+
+        //fireEnabled = !fireEnabled;
+        //toggleFire();
+        turnOffFire();
 
         movieEnabled = !movieEnabled;
         toggleTV();
@@ -111,22 +117,6 @@ public class PlayerController : MonoBehaviour {
                 slaveSpeakers[i - 1] = speakers[i];
             }
         }
-
-        //Disable fire ps and sound on start
-        foreach (ParticleSystem ps in firePS.GetComponentsInChildren<ParticleSystem>())
-        {
-            ps.Stop();
-        }
-        foreach (Light l in firePS.GetComponentsInChildren<Light>())
-        {
-            l.gameObject.SetActive(false);
-        }
-        AudioSource source = firePS.GetComponent<AudioSource>();
-        if (source)
-        {
-            source.Stop();
-        }
-
     }
 
     public void toggleTV()
@@ -195,8 +185,24 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        if (OVRPlugin.userPresent && monitorCanvas.activeInHierarchy)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            monitorCanvas.SetActive(false);
+        }
+
+        if(!OVRPlugin.userPresent && !monitorCanvas.activeInHierarchy)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            monitorCanvas.SetActive(true);
+        }
+
         if (OVRPlugin.userPresent && currentTimeOutOfHMD > 0)
+        {
             currentTimeOutOfHMD = 0;
+        }
         else if (!OVRPlugin.userPresent)
         {
             currentTimeOutOfHMD += Time.deltaTime;
@@ -205,11 +211,19 @@ public class PlayerController : MonoBehaviour {
             Debug.Log(currentTimeOutOfHMD);
 #endif
 */
-            if(currentTimeOutOfHMD > maxTimeOutOfHMDBeforeLoad)
+            if (currentTimeOutOfHMD > maxTimeOutOfHMDBeforeLoad)
             {
-                //TODO: Load main
+                loadMain();
             }
         }
+    }
+
+    public void loadMain()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        tpController.arduinoController.resetBoth();
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     // Update is called once per frame
@@ -219,15 +233,14 @@ public class PlayerController : MonoBehaviour {
 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            //TODO: Load main menu
-
-            /*
+            tpController.arduinoController.resetBoth();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-#elif UNITY_STANDALONE
-            Application.Quit();
 #endif
-            */
+#if UNITY_STANDALONE
+            SceneManager.LoadScene(0, LoadSceneMode.Single);
+#endif
+            
         }
 
         /*
@@ -258,7 +271,8 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            //TODO: Reload current level
+            loadMain();
+
         }
 #if UNITY_STANDALONE
         if (Input.GetKeyDown(KeyCode.P) || (OVRInput.GetDown(OVRInput.Button.Start)))
@@ -423,6 +437,45 @@ public class PlayerController : MonoBehaviour {
 
 
 
+    }
+
+    public void turnOffFire()
+    {
+
+        foreach (ParticleSystem ps in firePS.GetComponentsInChildren<ParticleSystem>())
+        {
+            ps.Stop();
+        }
+        foreach (Light l in firePS.GetComponentsInChildren<Light>())
+        {
+            l.gameObject.SetActive(false);
+        }
+        AudioSource source = firePS.GetComponent<AudioSource>();
+        if (source)
+        {
+            source.Stop();
+        }
+
+        if (!fireEnabled && tpController.arduinoController.heaterOn)
+        {
+            tpController.arduinoController.turnHeaterOff();
+        }
+    }
+
+    public void toggleLamp()
+    {
+        lampEnabled = !lampEnabled;
+
+        if(lampEnabled)
+        {
+            lampOn.SetActive(true);
+            lampOff.SetActive(false);
+        }
+        else
+        {
+            lampOn.SetActive(false);
+            lampOff.SetActive(true);
+        }
     }
 
     public void toggleSpeakerClips()
