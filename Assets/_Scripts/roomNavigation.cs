@@ -38,13 +38,13 @@ public class roomNavigation : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //Debug.Log((agent.destination - transform.position).magnitude);
-        if((agent.destination - transform.position).magnitude < 0.05f && navigationEnabled)
+        if((agent.destination - transform.position).magnitude < 0.2f && navigationEnabled)
         {
             agent.destination = GenerateRandomPoint(navigationMesh);
-            agent.Stop();
         }
-        else if(audio.isPlaying && (agent.destination - transform.position).magnitude < 0.05f && !navigationEnabled)
+        else if(audio.isPlaying && (agent.destination - transform.position).magnitude < 0.5f && !navigationEnabled)
         {
+            agent.Stop();
             audio.Stop();
         }
         /*

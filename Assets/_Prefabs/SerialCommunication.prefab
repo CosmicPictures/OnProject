@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4567477661551956}
   - component: {fileID: 114230094802922728}
   - component: {fileID: 114491865204673388}
+  - component: {fileID: 114270390883815666}
   m_Layer: 0
   m_Name: SerialCommunication
   m_TagString: Untagged
@@ -47,12 +48,27 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1643029771063756}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 18f893edc1e718a4ebe5e9476daa128a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sbc: {fileID: 114491865204673388}
+--- !u!114 &114270390883815666
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1643029771063756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b5570ec72e031b43a8a8c513ee5edbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sbc: {fileID: 114491865204673388}
+  fanOn: 0
+  heaterOn: 0
+  signalSendDelay: 0.05
 --- !u!114 &114491865204673388
 MonoBehaviour:
   m_ObjectHideFlags: 1

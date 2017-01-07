@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour {
 
         //fireEnabled = !fireEnabled;
         //toggleFire();
-        turnOffFire();
+        //turnOffFire();
 
         movieEnabled = !movieEnabled;
         toggleTV();
@@ -247,40 +247,54 @@ public class PlayerController : MonoBehaviour {
 #endif
             
         }
-
         /*
         if (Input.GetKeyDown(KeyCode.F))
         {
-            
+
             toggleFire();
 
         }
-        if(Input.GetKeyDown(KeyCode.T))
+        
+        if (Input.GetKeyDown(KeyCode.T))
         {
 
             toggleTV();
         }
+
+
+
+        
         if (Input.GetKeyDown(KeyCode.C))
         {
             toggleWebcam();
         }
-        if(Input.GetKeyDown(KeyCode.M))
+        
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            toggleCoffee();
+        }
+        if (Input.GetKeyDown(KeyCode.M))
         {
             toggleSpeakerClips();
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             toggleRoomba();
         }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            toggleLamp();
+        }
         */
-
         if (Input.GetKeyDown(KeyCode.R))
         {
             loadMain();
 
         }
-        
 
+
+        
+        /*
         if (Input.GetKeyDown(KeyCode.P) || (OVRInput.GetDown(OVRInput.Button.Start)))
         {
             while(screenshotNum < 1000)
@@ -294,7 +308,7 @@ public class PlayerController : MonoBehaviour {
             Application.CaptureScreenshot("Screenshot_" + screenshotNum.ToString() + ".png");
             screenshotNum++;
         }
-        
+        */
         //Sync speakers
         if (masterSpeaker.isPlaying)
         {
@@ -407,46 +421,53 @@ public class PlayerController : MonoBehaviour {
 
     public void toggleFire()
     {
-        fireEnabled = !fireEnabled;
-
-        foreach (ParticleSystem ps in firePS.GetComponentsInChildren<ParticleSystem>())
+        if(fireEnabled == false && firePS.activeInHierarchy == false)
         {
-            if (!fireEnabled)
-                ps.Stop();
-            else
-                ps.Play();
+            fireEnabled = true;
+            firePS.SetActive(true);
         }
-        foreach (Light l in firePS.GetComponentsInChildren<Light>())
+        else
         {
-            if (!fireEnabled)
+            fireEnabled = !fireEnabled;
+
+            foreach (ParticleSystem ps in firePS.GetComponentsInChildren<ParticleSystem>())
             {
-                l.gameObject.SetActive(false);
-
+                if (!fireEnabled)
+                    ps.Stop();
+                else
+                    ps.Play();
             }
-            else
-                l.gameObject.SetActive(true);
-        }
-        AudioSource source = firePS.GetComponent<AudioSource>();
-        if(source)
-        {
-            if (!fireEnabled)
+            foreach (Light l in firePS.GetComponentsInChildren<Light>())
             {
-                source.Stop();
+                if (!fireEnabled)
+                {
+                    l.gameObject.SetActive(false);
+
+                }
+                else
+                    l.gameObject.SetActive(true);
             }
-            else
-                source.Play();
-        }
+            AudioSource source = firePS.GetComponent<AudioSource>();
+            if (source)
+            {
+                if (!fireEnabled)
+                {
+                    source.Stop();
+                }
+                else
+                    source.Play();
+            }
 
-        if(fireEnabled && tpController.heaterList.Contains(tpController.currentTeleportPoint) && !tpController.arduinoController.heaterOn)
-        {
-            tpController.arduinoController.turnHeaterOn();
-        }
+            if (fireEnabled && tpController.heaterList.Contains(tpController.currentTeleportPoint) && !tpController.arduinoController.heaterOn)
+            {
+                tpController.arduinoController.turnHeaterOn();
+            }
 
-        if (!fireEnabled && tpController.arduinoController.heaterOn)
-        {
-            tpController.arduinoController.turnHeaterOff();
+            if (!fireEnabled && tpController.arduinoController.heaterOn)
+            {
+                tpController.arduinoController.turnHeaterOff();
+            }
         }
-
 
 
     }

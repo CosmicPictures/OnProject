@@ -121,7 +121,10 @@ PlayerSettings:
     Others: 1
   bundleIdentifier: com.unity3d.vrstandardassets
   bundleVersion: 1.0
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 4800000, guid: df15e39236e02d44c85b0c8120502ea5, type: 3}
+  - {fileID: 4800000, guid: 9b56415638d9f8341bd563a16f8b0b09, type: 3}
+  - {fileID: 4800000, guid: 368b299c70515a849ab2ca337974e45a, type: 3}
   metroInputSource: 0
   m_HolographicPauseOnTrackingLoss: 1
   xboxOneDisableKinectGpuReservation: 0

@@ -20,6 +20,8 @@ public class MirrorReflection : MonoBehaviour
     
     private static bool s_InsideRendering = false;
 
+    public Camera cam;
+
     // This is called when it's known that the object will be rendered by some
     // camera. We render reflections and do other updates here.
     // Because the script executes in edit mode, reflections for the scene view
@@ -29,7 +31,7 @@ public class MirrorReflection : MonoBehaviour
         if( !enabled || !GetComponent<Renderer>() || !GetComponent<Renderer>().sharedMaterial || !GetComponent<Renderer>().enabled )
             return;
             
-        Camera cam = Camera.current;
+        cam = Camera.current;
         if( !cam )
             return;
     

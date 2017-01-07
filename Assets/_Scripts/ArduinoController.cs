@@ -12,6 +12,8 @@ public class ArduinoController : MonoBehaviour
     public bool fanOn;
     public bool heaterOn;
 
+    public float signalSendDelay = 0.25f;
+
     private void Start()
     {
         StartCoroutine(turnBothOff());
@@ -19,8 +21,9 @@ public class ArduinoController : MonoBehaviour
 
     public IEnumerator turnBothOff()
     {
+        yield return new WaitForSeconds(signalSendDelay);
         turnFanOff();
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(signalSendDelay);
         turnHeaterOff();
         yield return null;
     }
@@ -81,12 +84,13 @@ public class ArduinoController : MonoBehaviour
         heaterOn = false;
     }
 
-    private void OnApplicationQuit()
+    
+    void OnApplicationQuit()
     {
         turnFanOff();
         turnHeaterOff();
     }
-
+    
     
 
 }
