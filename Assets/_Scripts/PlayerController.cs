@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour {
     public TeleportController tpController;
     public GameObject monitorCanvas;
     private bool webcamSet = false;
+    public bool enableWebcam = true;
 
     private int screenshotNum = 0;
 
@@ -79,23 +80,33 @@ public class PlayerController : MonoBehaviour {
         movieAudioSource = TVScreen.GetComponent<AudioSource>();
         movieAudio = movie.audioClip;
         movieAudioSource.clip = movieAudio;
-        webcamTex = new WebCamTexture();
-        webcamTex.requestedWidth = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.x);
-        webcamTex.requestedHeight = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.y);
-
-        securityTex = webcamTex;
-        //securityTex.requestedWidth = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
-        //securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
-        securityScreen.texture = securityTex;
-
-        if (WebCamTexture.devices.Length > 0)
+        if (enableWebcam)
         {
-            webcamTex.Play();
-            securityTex.Play();
+            webcamTex = new WebCamTexture();
+            webcamTex.requestedWidth = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.x);
+            webcamTex.requestedHeight = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.y);
+
+            securityTex = webcamTex;
+            //securityTex.requestedWidth = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
+            //securityTex.requestedHeight = (int)securityScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+            securityScreen.texture = securityTex;
+
+            if (WebCamTexture.devices.Length > 0)
+            {
+                webcamTex.Play();
+                securityTex.Play();
+            }
+            else
+                Debug.Log("No webcams found!");
+
+            webcamEnabled = !webcamEnabled;
+            toggleWebcam();
         }
         else
-            Debug.Log("No webcams found!");
-
+        {
+            WebcamScreen.gameObject.SetActive(false);
+            securityScreen.gameObject.SetActive(false);
+        }
 
 
         //fireEnabled = !fireEnabled;
@@ -105,8 +116,7 @@ public class PlayerController : MonoBehaviour {
         movieEnabled = !movieEnabled;
         toggleTV();
 
-        webcamEnabled = !webcamEnabled;
-        toggleWebcam();
+
 
         if(speakers[0])
             masterSpeaker = speakers[0];

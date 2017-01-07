@@ -99,9 +99,12 @@ public class tabletToggle : MonoBehaviour
                     StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Webcam:
-                    pc.toggleWebcam();
-                    simulateClick();
-                    StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
+                    if (pc.enableWebcam)
+                    {
+                        pc.toggleWebcam();
+                    }
+                        simulateClick();
+                        StartCoroutine(pc.disableInputForTime(pc.buttonCooldown, true, true));
                     break;
                 case Interaction.Video:
                     pc.toggleTV();
