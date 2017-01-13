@@ -1603,6 +1603,7 @@ MonoBehaviour:
   coffeeFill: {fileID: 0}
   tpController: {fileID: 763760374}
   monitorCanvas: {fileID: 0}
+  enableWebcam: 1
   maxTimeOutOfHMDBeforeLoad: 20
 --- !u!114 &763760379
 MonoBehaviour:

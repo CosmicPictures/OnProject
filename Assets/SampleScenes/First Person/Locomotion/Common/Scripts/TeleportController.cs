@@ -195,27 +195,49 @@ public class TeleportController : MonoBehaviour {
             if(pc.fireEnabled)
                 if (arduinoController)
                     if (!arduinoController.heaterOn )
+                    {
+#if UNITY_EDITOR
+                        Debug.Log("Heater on!");
+#endif
                         arduinoController.turnHeaterOn();
+                    }
+                        
         }
         else
         {
-            if(arduinoController)
-                if(arduinoController.heaterOn)
+            if (arduinoController)
+                if (arduinoController.heaterOn)
+                {
+#if UNITY_EDITOR
+                    Debug.Log("Heater off!");
+#endif
                     arduinoController.turnHeaterOff();
+                }
         }
 
         //Check for fan
         if (fanList.Contains(currentTeleportPoint))
         {
-            if(arduinoController)
+            if (arduinoController)
                 if (!arduinoController.fanOn)
+                {
+#if UNITY_EDITOR
+                    Debug.Log("Fan on!");
+#endif
                     arduinoController.turnFanOn();
+                }
         }
         else
         {
             if (arduinoController)
                 if(arduinoController.fanOn)
+                {
+#if UNITY_EDITOR
+                    Debug.Log("Fan off!");
+#endif
                     arduinoController.turnFanOff();
+                }
+                    
         }
         
         //On teleport reset all text to default text

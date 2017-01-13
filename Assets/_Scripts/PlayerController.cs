@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour {
     public GameObject monitorCanvas;
     private bool webcamSet = false;
     public bool enableWebcam = true;
+    private bool loadingMain = false;
 
     private int screenshotNum = 0;
 
@@ -231,14 +232,29 @@ public class PlayerController : MonoBehaviour {
                 loadMain();
             }
         }
+
+        //Double check for heater left on
+        if (!fireEnabled && tpController.arduinoController.heaterOn)
+        {
+            tpController.arduinoController.turnHeaterOff();
+        }
+
     }
 
     public void loadMain()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        tpController.arduinoController.resetBoth();
-        SceneManager.LoadScene(0, LoadSceneMode.Single);
+        if (!loadingMain)
+        {
+            loadingMain = true;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            tpController.arduinoController.resetBoth();
+            webcamTex.Stop();
+            webcamTex = null;
+            securityTex.Stop();
+            securityTex = null;
+            SceneManager.LoadScene(0, LoadSceneMode.Single);
+        }
     }
 
     // Update is called once per frame
@@ -253,7 +269,7 @@ public class PlayerController : MonoBehaviour {
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
 #if UNITY_STANDALONE
-            SceneManager.LoadScene(0, LoadSceneMode.Single);
+            loadMain();
 #endif
             
         }
@@ -467,16 +483,16 @@ public class PlayerController : MonoBehaviour {
                 else
                     source.Play();
             }
+        }
 
-            if (fireEnabled && tpController.heaterList.Contains(tpController.currentTeleportPoint) && !tpController.arduinoController.heaterOn)
-            {
-                tpController.arduinoController.turnHeaterOn();
-            }
+        if (fireEnabled && tpController.heaterList.Contains(tpController.currentTeleportPoint) && !tpController.arduinoController.heaterOn)
+        {
+            tpController.arduinoController.turnHeaterOn();
+        }
 
-            if (!fireEnabled && tpController.arduinoController.heaterOn)
-            {
-                tpController.arduinoController.turnHeaterOff();
-            }
+        if (!fireEnabled && tpController.arduinoController.heaterOn)
+        {
+            tpController.arduinoController.turnHeaterOff();
         }
 
 
