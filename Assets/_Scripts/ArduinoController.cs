@@ -67,10 +67,25 @@ public class ArduinoController : MonoBehaviour
         sbc.sendMessage("1");
         fanOn = true;
     }
+
+    public IEnumerator turnFanOnAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        sbc.sendMessage("1");
+        fanOn = true;
+        yield return null;
+    }
     public void turnFanOff()
     {
         sbc.sendMessage("0");
         fanOn = false;
+    }
+    public IEnumerator turnFanOffAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        sbc.sendMessage("0");
+        fanOn = false;
+        yield return null;
     }
 
     public void turnHeaterOn()

@@ -51,6 +51,9 @@ public class PlayerController : MonoBehaviour {
     private bool webcamSet = false;
     public bool enableWebcam = true;
     private bool loadingMain = false;
+    public string webcamName = "Logitech HD Webcam C615";
+    public bool enableUpstairsTeleports = false;
+    public GameObject upstairsTeleports;
 
     private int screenshotNum = 0;
 
@@ -64,6 +67,11 @@ public class PlayerController : MonoBehaviour {
         Application.targetFrameRate = targetFPS;
 
         roombaScript = roomba.GetComponent<roomNavigation>();
+
+        if(upstairsTeleports && enableUpstairsTeleports)
+        {
+            upstairsTeleports.SetActive(true);
+        }
 
         //QualitySettings.vSyncCount = 0;
         loadClips = new AudioClip[speakers.Length,speakerClips.Length];
@@ -83,7 +91,28 @@ public class PlayerController : MonoBehaviour {
         movieAudioSource.clip = movieAudio;
         if (enableWebcam)
         {
-            webcamTex = new WebCamTexture();
+            List<string> webcamNames = new List<string>();
+            foreach(WebCamDevice w in WebCamTexture.devices)
+            {
+#if UNITY_EDITOR
+                Debug.Log(w.name);
+#endif
+                webcamNames.Add(w.name);
+            }
+
+            if(webcamNames.Contains(webcamName))
+            {
+                webcamTex = new WebCamTexture(webcamName);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                Debug.Log("Could not find webcam " + webcamName + ", finding any webcam.");
+#endif
+                webcamTex = new WebCamTexture();
+            }
+                
+
             webcamTex.requestedWidth = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.x / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.x);
             webcamTex.requestedHeight = (int)(WebcamScreen.transform.parent.GetComponent<RectTransform>().sizeDelta.y / WebcamScreen.transform.parent.GetComponent<RectTransform>().localScale.y);
 

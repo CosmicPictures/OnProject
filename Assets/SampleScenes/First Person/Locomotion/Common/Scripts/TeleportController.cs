@@ -189,6 +189,8 @@ public class TeleportController : MonoBehaviour {
             transform.rotation = destRotation;
         }
 
+        bool toggledHeater = false;
+
         //Check for heater
         if( heaterList.Contains( currentTeleportPoint) )
         {
@@ -199,6 +201,7 @@ public class TeleportController : MonoBehaviour {
 #if UNITY_EDITOR
                         Debug.Log("Heater on!");
 #endif
+                        toggledHeater = true;
                         arduinoController.turnHeaterOn();
                     }
                         
@@ -211,6 +214,7 @@ public class TeleportController : MonoBehaviour {
 #if UNITY_EDITOR
                     Debug.Log("Heater off!");
 #endif
+                    toggledHeater = true;
                     arduinoController.turnHeaterOff();
                 }
         }
@@ -224,7 +228,12 @@ public class TeleportController : MonoBehaviour {
 #if UNITY_EDITOR
                     Debug.Log("Fan on!");
 #endif
-                    arduinoController.turnFanOn();
+                    if(toggledHeater)
+                    {
+                        StartCoroutine(arduinoController.turnFanOnAfterTime(0.1f));
+                    }
+                    else
+                        arduinoController.turnFanOn();
                 }
         }
         else
@@ -235,7 +244,12 @@ public class TeleportController : MonoBehaviour {
 #if UNITY_EDITOR
                     Debug.Log("Fan off!");
 #endif
-                    arduinoController.turnFanOff();
+                    if(toggledHeater)
+                    {
+                        StartCoroutine(arduinoController.turnFanOffAfterTime(0.1f));
+                    }
+                    else
+                        arduinoController.turnFanOff();
                 }
                     
         }
